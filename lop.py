@@ -5,9 +5,8 @@ from sys import argv
 from netmiko import ConnectHandler
 
 
-# Will return a string, need to split string and make new list with acct, name, loc, em for each affected sub
-def affected():
-    get_affected = requests.get(f'https://10.20.7.10:18443/rest/v1/fault/export/csv/subscriber/device-name/CVEC-E9-1/instance-id/3.76637',
+def affected(instid, port, e9):
+    get_affected = requests.get(f'https://10.20.7.10:18443/rest/v1/fault/export/csv/subscriber/device-name/{e9}/instance-id/{instid}',
                                 auth=('admin', 'Thesearethetimes!'), verify=False)
     r = get_affected.text.split('\r\n')
     for i in r[1:-1]:
@@ -16,34 +15,38 @@ def affected():
         name = sp[1]
         loc = ' '.join(sp[2:5])
         em = sp[-1]
-        with open('test.txt', 'w') as f:
-            f.write(f'{acct}\n{name}\n{loc}\n{em}\n')
-
-        # print(f'{acct}\n{name}\n{loc}\n{em}\n')
-    # email(acct, name, loc, em)
+        with open(f'{e9}_{instid}.txt', 'a') as f:
+            f.write(f'{acct}\n{name}\n{loc}\n{em}\n\n')
+    email(acct, name, loc, em, port, e9, instid)
 
 
-# def clr_alarm():
-#    device = {'device_type': 'cisco_ios',
-#              'host':   '10.20.99.51',
-#              'username':   'sysadmin',
-#              'password':   'Thesearethetimes!',
-#              'fast_cli':   False,
-#              }
-#    con = ConnectHandler(**device)
-#    output = con.send_command('show alarm active alarm 1')
-#    instid = output.split()
-#    con.send_command(f'manual shelve instance_id {instid}')
-#    affected(instid[11])
+def clr_alarm():
+    device = {'device_type': 'cisco_ios',
+              'host':   '10.20.0.51',
+              'username':   'sysadmin',
+              'password':   'Thesearethetimes!',
+              'fast_cli':   False,
+              }
+    con = ConnectHandler(**device)
+    output = con.send_command('show alarm active alarm 1')
+    data = output.split()
+    instid = data[11]
+    gport = data[17].split("'")
+    port = gport[1]
+    e9 = data[18].rstrip('#')
+    con.send_command(f'manual shelve instance-id {instid}')
+    con.disconnect()
+    affected(instid, port, e9)
 
 
-def email(acct, name, loc, em):
+def email(acct, name, loc, em, port, e9, instid):
     import smtplib
     from email.message import EmailMessage
 
-    msg = EmailMessage()
-    msg.set_content(f'{acct}\n{name}\n{loc}\n{em}')
-    msg['Subject'] = 'Affected Subs'
+    with open(f'{e9}_{instid}.txt', 'r') as f:
+        msg = EmailMessage()
+        msg.set_content(f.read())
+    msg['Subject'] = f'Affected Subs {e9} on port {port}'
     msg['From'] = 'python@precision.net'
     msg['To'] = 'dishman@cvecfiber.com'
 
@@ -52,4 +55,4 @@ def email(acct, name, loc, em):
     s.quit()
 
 
-affected()
+clr_alarm()
