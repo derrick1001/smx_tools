@@ -1,10 +1,8 @@
 #!/usr/bin/python3
 
 import requests
-from sys import argv
+from sys import argv, path
 from netmiko import ConnectHandler
-
-# Add another call to get fiber information from the pon port
 
 
 def affected(instid, port, e9):
@@ -24,21 +22,25 @@ def affected(instid, port, e9):
 
 def clr_alarm():
     device = {'device_type': 'cisco_ios',
-              'host':   '10.20.0.51',
+              'host':   f'{argv[1]}',
               'username':   'sysadmin',
               'password':   'Thesearethetimes!',
               'fast_cli':   False,
               }
     con = ConnectHandler(**device)
-    output = con.send_command('show alarm active alarm 1')
-    data = output.split()
-    instid = data[11]
-    gport = data[17].split("'")
-    port = gport[1]
-    e9 = data[18].rstrip('#')
-    # con.send_command(f'manual shelve instance-id {instid}')
+    output = con.send_command_timing(
+        'show alarm active | include loss-of-pon')
+    con.send_command_timing('configure')
+    hostname = con.send_command_timing('show full-configuration hostname')
+    e9 = hostname.lstrip('hostname ')
+    alarms = output.split('\n')
+    for alarm in alarms:
+        data = alarm.split()
+        instid = data[7]
+        gport = data[13].split("'")
+        port = gport[1]
+        affected(instid, port, e9)
     con.disconnect()
-    affected(instid, port, e9)
 
 
 def email(acct, name, loc, em, port, e9, instid):
@@ -47,14 +49,28 @@ def email(acct, name, loc, em, port, e9, instid):
     with open(f'{e9}_{instid}.txt', 'r') as f:
         msg = EmailMessage()
         msg.set_content(f.read())
-    msg['Subject'] = f'Affected Subs {e9} on port {port}'
-    msg['From'] = 'python@precision.net'
+    msg['Subject'] = f'All ONT missing {e9} on port {port}'
+    msg['From'] = 'python@mycvecfiber.com'
     msg['To'] = 'dishman@cvecfiber.com'
-    # msg['Cc'] = 'jailey@cvecfiber.com'
+    # msg['Cc'] = 'kmarshala@cvecfiber.com'
 
     s = smtplib.SMTP('10.20.7.31')
     s.send_message(msg)
+    clean_up(e9, instid)
     s.quit()
+
+
+def clean_up(e9, instid):
+    from subprocess import run
+    path.append('/home/derrick/Documents/CVEC_Stuff/loss_of_pon/')
+    ls = run('ls *.txt',
+             text=True,
+             shell=True
+             )
+    for file in ls.stdout.split():
+        run(f'mv {e9}_{instid}.txt {path[-1]}/{e9}/{e9}_{instid}.txt',
+            shell=True
+            )
 
 
 clr_alarm()
