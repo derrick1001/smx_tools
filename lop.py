@@ -50,7 +50,7 @@ def email(acct, name, loc, em, port, e9, instid):
         msg = EmailMessage()
         msg.set_content(f.read())
     msg['Subject'] = f'All ONT missing {e9} on port {port}'
-    msg['From'] = 'python@mycvecfiber.com'
+    msg['From'] = 'nms@mycvecfiber.com'
     msg['To'] = 'dishman@cvecfiber.com'
     # msg['Cc'] = 'kmarshala@cvecfiber.com'
 
