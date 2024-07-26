@@ -5,6 +5,31 @@ from sys import argv, path
 from netmiko import ConnectHandler
 
 
+def clr_alarm():
+    device = {'device_type': 'cisco_ios',
+              'host':   f'{argv[1]}',
+              'username':   'sysadmin',
+              'password':   'Thesearethetimes!',
+              'fast_cli':   False,
+              }
+    con = ConnectHandler(**device)
+    output = con.send_command(
+        'show alarm active | include loss-of-pon')
+    con.send_command_timing('configure')
+    hostname = con.send_command_timing('show full-configuration hostname')
+    e9 = hostname.lstrip('hostname ')
+    alarms = output.split('\n')
+    for alarm in alarms:
+        data = alarm.split()
+        if not len(data) >= 13:
+            continue
+        instid = data[7]
+        gport = data[13].split("'")
+        port = gport[1]
+        affected(instid, port, e9)
+    con.disconnect()
+
+
 def affected(instid, port, e9):
     get_affected = requests.get(f'https://10.20.7.10:18443/rest/v1/fault/export/csv/subscriber/device-name/{e9}/instance-id/{instid}',
                                 auth=('admin', 'Thesearethetimes!'), verify=False)
@@ -17,33 +42,10 @@ def affected(instid, port, e9):
         em = sp[-1]
         with open(f'{e9}_{instid}.txt', 'a') as f:
             f.write(f'{acct}\n{name}\n{loc}\n{em}\n\n')
-    email(acct, name, loc, em, port, e9, instid)
+    email(e9, instid, port)
 
 
-def clr_alarm():
-    device = {'device_type': 'cisco_ios',
-              'host':   f'{argv[1]}',
-              'username':   'sysadmin',
-              'password':   'Thesearethetimes!',
-              'fast_cli':   False,
-              }
-    con = ConnectHandler(**device)
-    output = con.send_command_timing(
-        'show alarm active | include loss-of-pon')
-    con.send_command_timing('configure')
-    hostname = con.send_command_timing('show full-configuration hostname')
-    e9 = hostname.lstrip('hostname ')
-    alarms = output.split('\n')
-    for alarm in alarms:
-        data = alarm.split()
-        instid = data[7]
-        gport = data[13].split("'")
-        port = gport[1]
-        affected(instid, port, e9)
-    con.disconnect()
-
-
-def email(acct, name, loc, em, port, e9, instid):
+def email(e9, instid, port):
     import smtplib
     from email.message import EmailMessage
     with open(f'{e9}_{instid}.txt', 'r') as f:
@@ -53,9 +55,8 @@ def email(acct, name, loc, em, port, e9, instid):
     msg['From'] = 'nms@mycvecfiber.com'
     msg['To'] = 'dishman@cvecfiber.com'
     # msg['Cc'] = 'kmarshala@cvecfiber.com'
-
     s = smtplib.SMTP('10.20.7.31')
-    s.send_message(msg)
+    # s.send_message(msg)
     clean_up(e9, instid)
     s.quit()
 
@@ -63,11 +64,12 @@ def email(acct, name, loc, em, port, e9, instid):
 def clean_up(e9, instid):
     from subprocess import run
     path.append('/home/derrick/Documents/CVEC_Stuff/loss_of_pon/')
-    ls = run('ls *.txt',
+    p1 = run('ls *.txt',
              text=True,
-             shell=True
+             shell=True,
+             capture_output=True
              )
-    for file in ls.stdout.split():
+    for _ in p1.stdout.split():
         run(f'mv {e9}_{instid}.txt {path[-1]}/{e9}/{e9}_{instid}.txt',
             shell=True
             )
