@@ -15,8 +15,8 @@ def clr_alarm():
     con = ConnectHandler(**device)
     output = con.send_command(
         'show alarm active | include loss-of-pon')
-    con.send_command_timing('configure')
-    hostname = con.send_command_timing('show full-configuration hostname')
+    con.send_command('configure')
+    hostname = con.send_command('show full-configuration hostname')
     e9 = hostname.lstrip('hostname ')
     alarms = output.split('\n')
     for alarm in alarms:
@@ -56,7 +56,7 @@ def email(e9, instid, port):
     msg['To'] = 'dishman@cvecfiber.com'
     # msg['Cc'] = 'kmarshala@cvecfiber.com'
     s = smtplib.SMTP('10.20.7.31')
-    # s.send_message(msg)
+    s.send_message(msg)
     clean_up(e9, instid)
     s.quit()
 
