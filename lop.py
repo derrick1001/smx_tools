@@ -13,10 +13,10 @@ def clr_alarm():
               'fast_cli':   False,
               }
     con = ConnectHandler(**device)
-    output = con.send_command(
+    output = con.send_command_timing(
         'show alarm active | include loss-of-pon')
-    con.send_command('configure')
-    hostname = con.send_command('show full-configuration hostname')
+    con.send_command_timing('configure')
+    hostname = con.send_command_timing('show full-configuration hostname')
     e9 = hostname.lstrip('hostname ')
     alarms = output.split('\n')
     for alarm in alarms:
