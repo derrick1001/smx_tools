@@ -17,7 +17,9 @@ def clr_alarm():
         'show alarm active | include loss-of-pon')
     con.send_command_timing('configure')
     hostname = con.send_command_timing('show full-configuration hostname')
-    e9 = hostname.lstrip('hostname ')
+    strip_prompt = hostname.split('\n')
+    e9 = strip_prompt[0].lstrip('hostname ')
+    con.disconnect()
     alarms = output.split('\n')
     for alarm in alarms:
         data = alarm.split()
@@ -27,7 +29,6 @@ def clr_alarm():
         gport = data[13].split("'")
         port = gport[1]
         affected(instid, port, e9)
-    con.disconnect()
 
 
 def affected(instid, port, e9):
