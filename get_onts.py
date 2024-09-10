@@ -13,7 +13,7 @@ def get_onts():
     shelf = (input(f'{c_BLUE}Shelf: {c_WHITE}'))
     slot = (input(f'{c_BLUE}Slot: {c_WHITE}'))
     port = (input(f'{c_BLUE}Port: {c_WHITE}'))
-    response = get(f'https://10.20.7.10:18443/rest/v1/performance/device/{argv[1]}/ponstatus/shelf/{shelf}/slot/{slot}/port/{port}/status?refresh=false',
+    response = get(f'https://10.20.7.10:18443/rest/v1/performance/device/{argv[1]}/ponstatus/shelf/{shelf}/slot/{slot}/port/xp{port}/status?refresh=false',
                    auth=('admin', 'Thesearethetimes!'),
                    verify=False)
     r = response.json()

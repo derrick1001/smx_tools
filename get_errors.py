@@ -23,7 +23,7 @@ def netcon(shelf, slot, port):
               }
     con = ConnectHandler(**device)
     output = con.send_command_timing(
-        f'show interface pon {shelf}/{slot}/{port} ranged-onts statistics')
+        f'show interface pon {shelf}/{slot}/xp{port} ranged-onts statistics')
     return output
 
 
