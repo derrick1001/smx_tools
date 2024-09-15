@@ -1,11 +1,33 @@
 #!/usr/bin/python3
 
 from requests import get
+from datetime import timedelta
 from sys import argv, path
 from netmiko import ConnectHandler
 
 
 def clr_alarm():
+
+    def ont_detail(e9, port):
+        ont_detail = get(f'https://10.20.7.10:18443/rest/v1/performance/device/{e9}/ont/{port}/status',
+                         auth=('admin', 'Thesearethetimes!'),
+                         verify=False)
+        r = ont_detail.json()
+        sn = r.get('serial-number')
+        ut = int(r.get('up-time'))
+        td = timedelta(seconds=ut)
+        td_str = str(td)
+        fmt_ut = td_str.split(':')
+        h, m, s = fmt_ut
+        lpon = r.get('linked-pon')
+        lr = r.get('latest-restart-reason')
+        up_rx = r.get('opt-signal-level')
+        dn_rx = r.get('ne-opt-signal-level')
+        up_ber = r.get('us-sdber-rate')
+        dn_ber = r.get('ds-sdber-rate')
+        rlen = int(r.get('range-length')) / 1000
+        return f'ONT: {port}\nUS-Light: {up_rx}\nDS-Light: {dn_rx}\nUS-BER: {up_ber}\nDS-BER: {dn_ber}\nRange: {rlen}km\nSN: {sn}\nUptime: {h}hours {m}minutes {s}seconds\nPON-Port: {lpon}\nLast-Restart: {lr}\n'
+
     device = {'device_type': 'cisco_ios',
               'host':   f'{argv[1]}',
               'username':   'sysadmin',
@@ -17,7 +39,7 @@ def clr_alarm():
         'show alarm active | include low-rx-opt-pwr-fe')
     con.send_command_timing('configure')
     hostname = con.send_command_timing('show full-configuration hostname')
-    con.send_command_timing('exit')
+    con.disconnect()
     strip_prompt = hostname.split('\n')
     e9 = strip_prompt[0].lstrip('hostname ')
     alarms = output.split('\n')
@@ -28,16 +50,8 @@ def clr_alarm():
         instid = data[7]
         gport = data[13].split("'")
         port = gport[1]
-        ont_detail = get(f'https://10.20.7.10:18443/rest/v1/performance/device/{e9}/ont/{port}/status',
-                         auth=('admin', 'Thesearethetimes!'),
-                         verify=False)
-        r = ont_detail.json()
-        up_rx = r.get('opt-signal-level')
-        dn_rx = r.get('ne-opt-signal-level')
-        up_ber = r.get('us-sdber-rate')
-        dn_ber = r.get('ds-sdber-rate')
-        rlen = r.get('range-length')
-        print(f'{port}, {up_rx}, {dn_rx}, {up_ber}, {dn_ber}, {rlen}')
+        info = ont_detail(e9, port)
+        print(info)
     # afaffected(instid, port, e9)
 
 
