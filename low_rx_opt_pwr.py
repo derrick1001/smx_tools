@@ -33,13 +33,13 @@ def main():
         e9 = strip_prompt[0].lstrip('hostname ')
         return e9, alrm_tbl
 
-    def cx_detail(tbl, e9):
+    def cx_detail(e9, tbl):
 
         def ont_detail(e9, port):
-            ont_detail = get(f'https://10.20.7.10:18443/rest/v1/performance/device/{e9}/ont/{port}/status',
-                             auth=('admin', 'Thesearethetimes!'),
-                             verify=False)
-            r = ont_detail.json()
+            ont = get(f'https://10.20.7.10:18443/rest/v1/performance/device/{e9}/ont/{port}/status',
+                      auth=('admin', 'Thesearethetimes!'),
+                      verify=False)
+            r = ont.json()
             sn = r.get('serial-number')
             ut = int(r.get('up-time'))
             td = timedelta(seconds=ut)
@@ -53,7 +53,7 @@ def main():
             up_ber = r.get('us-sdber-rate')
             dn_ber = r.get('ds-sdber-rate')
             rlen = int(r.get('range-length')) / 1000
-            return f'ONT: {port}\nUS-Light: {up_rx}\nDS-Light: {dn_rx}\nUS-BER: {up_ber}\nDS-BER: {dn_ber}\nRange: {rlen}km\nSN: {sn}\nUptime: {h}hours {m}minutes {s}seconds\nPON-Port: {lpon}\nLast-Restart: {lr}\n'
+            return f'\nONT: {port}\nUS-Light: {up_rx}\nDS-Light: {dn_rx}\nUS-BER: {up_ber}\nDS-BER: {dn_ber}\nRange: {rlen}km\nSN: {sn}\nUptime: {h}hours {m}minutes {s}seconds\nPON-Port: {lpon}\nLast-Restart: {lr}\n'
 
         def affected(instid, port, e9):
             get_affected = get(f'https://10.20.7.10:18443/rest/v1/fault/export/csv/subscriber/device-name/{e9}/instance-id/{instid}',
@@ -65,8 +65,7 @@ def main():
                 name = sp[1]
                 loc = ' '.join(sp[2:5])
                 em = sp[-1]
-            return f'{acct}\n{name}\n{loc}\n{em}\n\n'
-            # email(e9, instid, port)
+            return f'{acct}\n{name}\n{loc}\n{em}'
 
         def email(e9, instid, port):
             import smtplib
@@ -101,14 +100,16 @@ def main():
             data = alrm.split()
             if not len(data) >= 13:
                 continue
-            instid, gport = data[7], data[13]
-            # gport = data[13].split("'")
+            instid, gport = data[7], data[13].split("'")
             port = gport[1]
-            cx_info = ont_detail(e9, port)
+            ont_info = ont_detail(e9, port)
+            cx_info = affected(instid, port, e9)
+            print(f'{cx_info}{ont_info}')
             # with open(f'{e9}_{instid}.txt', 'a') as f:
             #   f.write(f'{acct}\n{name}\n{loc}\n{em}\n\n')
-        #   affected(instid, port, e9)
+            #   affected(instid, port, e9)
+    e9, tbl = get_cmds()
+    cx_detail(e9, tbl)
 
 
-if __name__ == 'main':
-    main()
+main()
