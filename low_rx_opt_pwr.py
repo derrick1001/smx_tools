@@ -46,8 +46,8 @@ def cx_detail(e9, tbl):
         h, m, s = fmt_ut
         lpon = r.get('linked-pon')
         lr = r.get('latest-restart-reason')
-        up_rx = r.get('opt-signal-level')
-        dn_rx = r.get('ne-opt-signal-level')
+        up_rx = r.get('ne-opt-signal-level')
+        dn_rx = r.get('opt-signal-level')
         up_ber = r.get('us-sdber-rate')
         dn_ber = r.get('ds-sdber-rate')
         rlen = int(r.get('range-length')) / 1000
