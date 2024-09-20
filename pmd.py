@@ -55,7 +55,7 @@ def email(e9, instid, port):
     msg['Subject'] = f'PON MAC Degradation on {e9} on port {port}'
     msg['From'] = 'nms@mycvecfiber.com'
     msg['To'] = 'dishman@cvecfiber.com'
-    # msg['Cc'] = 'jjackson@cvecfiber.com'
+    msg['Cc'] = 'jjackson@cvecfiber.com'
     s = smtplib.SMTP('10.20.7.31')
     s.send_message(msg)
     clean_up(e9, instid)
