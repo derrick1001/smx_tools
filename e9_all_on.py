@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 from netmiko import ConnectHandler
+from sys import argv
 
 
 def connect():
@@ -11,50 +12,22 @@ def connect():
               'fast_cli':   False,
               }
 
-    con = ConnectHandler(**device)
-    return con
+    cnct = ConnectHandler(**device)
+    return cnct
 
 
-def card2():
+def shelf():
     # configure
     # interface pon x/x/x
     # no shut
     # top
-    con = connect()
-    for i in range(1, 17):
-        for k in range(1, 3):
-            cmds = ['configure', f'interface 2/{k}/xp{i}', 'no shut', 'top']
-            con.send_command_timing(cmds)
-    con.disconnect()
-
-
-def card3():
-    con = connect()
-    for i in range(1, 17):
-        for k in range(1, 3):
-            cmds = ['configure', f'interface 3/{k}/xp{i}', 'no shut', 'top']
-            con.send_command_timing(cmds)
-    con.disconnect()
-
-
-def card4():
-    con = connect()
-    for i in range(1, 17):
-        for k in range(1, 3):
-            cmds = ['configure', f'interface 4/{k}/xp{i}', 'no shut', 'top']
-            con.send_command_timing(cmds)
-    con.disconnect()
-
-
-def card5():
-    con = connect()
-    for i in range(1, 17):
-        for k in range(1, 3):
-            cmds = ['configure', f'interface 5/{k}/xp{i}', 'no shut', 'top']
-            con.send_command_timing(cmds)
-    con.disconnect()
-
-# card2()
-# card3()
-# card4()
-# card5()
+    shelves = int(argv[1])
+    with connect() as cnct:
+        cnct.send_command_timing('configure')
+        for shelf in shelves:
+            for p in range(1, 17):
+                for sl in range(1, 3):
+                    cnct.send_command_timing(
+                        f'interface pon {shelf}/{sl}/xp{p}')
+                    cnct.send_command_timing('shutdown')
+                    cnct.send_command_timing('top')
