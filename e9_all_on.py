@@ -4,30 +4,26 @@ from netmiko import ConnectHandler
 from sys import argv
 
 
-def connect():
+def shelf():
     device = {'device_type': 'cisco_ios',
-              'host':   '192.168.1.1',
+              'host':   argv[1],
               'username':   'sysadmin',
-              'password':   'sysadmin',
+              'password':   'Thesearethetimes!',
               'fast_cli':   False,
               }
-
-    cnct = ConnectHandler(**device)
-    return cnct
-
-
-def shelf():
-    # configure
-    # interface pon x/x/x
-    # no shut
-    # top
-    shelves = int(argv[1])
-    with connect() as cnct:
+    shelves = range(2, int(argv[2]) + 1)
+    slot = range(1, 3)
+    port = range(1, 17)
+    with ConnectHandler(**device) as cnct:
         cnct.send_command_timing('configure')
         for shelf in shelves:
-            for p in range(1, 17):
-                for sl in range(1, 3):
+            for sl in slot:
+                for p in port:
                     cnct.send_command_timing(
                         f'interface pon {shelf}/{sl}/xp{p}')
                     cnct.send_command_timing('shutdown')
                     cnct.send_command_timing('top')
+
+
+if __name__ == '__main__':
+    shelf()
