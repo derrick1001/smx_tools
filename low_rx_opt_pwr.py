@@ -77,7 +77,7 @@ def cx_detail(e9, tbl, cnct):
         msg['Subject'] = f'Low light levels for ONT-id {port} on {e9}'
         msg['From'] = 'nms@mycvecfiber.com'
         msg['To'] = 'dishman@cvecfiber.com'
-        # msg['Cc'] = 'jjackson@cvecfiber.com'
+        msg['Cc'] = ['kmarshala@cvecfiber.com', 'jjackson@cvecfiber.com']
         s = smtplib.SMTP('10.20.7.31')
         s.send_message(msg)
         s.quit()
