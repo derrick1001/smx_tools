@@ -92,7 +92,7 @@ def cx_detail(e9, tbl, cnct):
         path.append(
             '/home/derrick/Documents/CVEC_Stuff/low-rx-pwr/')
         cnct.send_command_timing(
-            f'manual shelve instance-id {instid}')
+            f'manual acknowledge instance-id {instid}')
         run(f'mv {e9}_{instid}.txt {path[-1]}/{e9}/{e9}_{instid}.txt',
             shell=True
             )
