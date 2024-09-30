@@ -40,7 +40,7 @@ def get_onts():
         dn_ber = i.get('detail').get('ds-sdber-rate')
         rlen = i.get('detail').get('range-length')
         rr = i.get('detail').get('latest-restart-reason')
-        print(f'\n{c_BLUE}ONT: {c_GREEN}{ont_id}\n{c_BLUE}SN: {c_CYAN}CXNK{sn}\n{c_BLUE}Acct: {c_CYAN}{sub_id}\n{c_BLUE}Light U/D: {c_YELLOW}{up_rx}{c_GREEN}/{c_YELLOW}{dn_rx}\n{c_BLUE}BER: {c_YELLOW}{up_ber}{c_GREEN}/{c_YELLOW}{dn_ber}\n{c_BLUE}Range: {c_YELLOW}{rlen / 1000} km\n{c_BLUE}VLAN: {c_YELLOW}{vlan_id}\n{c_BLUE}PKG: {c_YELLOW}{pkg}\n{c_MAGENTA}{rr}')
+        print(f'\n{c_BLUE}ONT: {c_GREEN}{ont_id}\n{c_BLUE}SN: {c_CYAN}CXNK{sn}\n{c_BLUE}Acct: {c_CYAN}{sub_id}\n{c_BLUE}Light U/D: {c_YELLOW}{dn_rx}{c_GREEN}/{c_YELLOW}{up_rx}\n{c_BLUE}BER: {c_YELLOW}{up_ber}{c_GREEN}/{c_YELLOW}{dn_ber}\n{c_BLUE}Range: {c_YELLOW}{rlen / 1000} km\n{c_BLUE}VLAN: {c_YELLOW}{vlan_id}\n{c_BLUE}PKG: {c_YELLOW}{pkg}\n{c_MAGENTA}{rr}')
     q = input(f'{c_CYAN}Press enter to exit...')
     if q is None:
         exit()
