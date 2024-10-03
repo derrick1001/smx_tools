@@ -6,7 +6,7 @@ from sys import argv
 # Add functionality for 3201 cards
 
 
-# Call with number of shelves
+# Call with starting shelf and ending shelf
 def shelf():
     device = {'device_type': 'cisco_ios',
               'host':   '192.168.1.1',
@@ -14,7 +14,7 @@ def shelf():
               'password':   'sysadmin',
               'fast_cli':   False,
               }
-    shelves = range(2, int(argv[1]) + 1)
+    shelves = range(int(argv[1]), int(argv[2]) + 1)
     slot = range(1, 3)
     port = range(1, 17)
     with ConnectHandler(**device) as cnct:
