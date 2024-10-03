@@ -3,7 +3,10 @@
 from netmiko import ConnectHandler
 from sys import argv
 
+# Add functionality for 3201 cards
 
+
+# Call with target IP and number of shelves
 def shelf():
     device = {'device_type': 'cisco_ios',
               'host':   argv[1],
