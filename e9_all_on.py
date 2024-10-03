@@ -6,15 +6,15 @@ from sys import argv
 # Add functionality for 3201 cards
 
 
-# Call with target IP and number of shelves
+# Call with number of shelves
 def shelf():
     device = {'device_type': 'cisco_ios',
-              'host':   argv[1],
+              'host':   '192.168.1.1',
               'username':   'sysadmin',
-              'password':   'Thesearethetimes!',
+              'password':   'sysadmin',
               'fast_cli':   False,
               }
-    shelves = range(2, int(argv[2]) + 1)
+    shelves = range(2, int(argv[1]) + 1)
     slot = range(1, 3)
     port = range(1, 17)
     with ConnectHandler(**device) as cnct:
@@ -24,8 +24,9 @@ def shelf():
                 for p in port:
                     cnct.send_command_timing(
                         f'interface pon {shelf}/{sl}/xp{p}')
-                    cnct.send_command_timing('shutdown')
+                    cnct.send_command_timing('no shutdown')
                     cnct.send_command_timing('top')
+                    print(f'{shelf}/{sl}/xp{p} is on')
 
 
 if __name__ == '__main__':
