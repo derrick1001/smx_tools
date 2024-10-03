@@ -78,7 +78,7 @@ def get_miss(func):
     return wrapper1
 
 
-@get_miss
+@get_act
 def netcon(shelf, slot, port):
     device = {'device_type': 'cisco_ios',
               'host':   f'{argv[1]}',

@@ -35,40 +35,38 @@ def netcon(shelf, slot, port):
 
 def test(str1, e9):
     m = re.split(r'ont CXNK [A-Z0-9]{6,7}', str1)
-    print('')
-    for i in m[1:]:
-        tmp = i.split()
-        print(tmp)
-        ndict = dict(zip(tmp[::2], tmp[1::2]))
-        ont_id = ndict.get('ont-id')
+    m_lst = (i.split() for i in m[1:])
+    ranged_onts = (dict(zip(i[::2], i[1::2])) for i in m_lst)
+    return ranged_onts
+
+
+def main(dict0):
+    from crayon import c_BLUE, c_GREEN, c_YELLOW, c_RED, c_CYAN, c_MAGENTA
+    for i in dict0:
+        ont_id = i.get('ont-id')
         get_name = get(f'https://10.20.7.10:18443/rest/v1/ems/subscriber/device/{e9}/port/{ont_id}%2Fx1',
                        auth=('admin', 'Thesearethetimes!'),
                        verify=False)
         r = get_name.json()
         name = r.get('name')
-        ndict['name'] = name
-        # print(ndict)
-
-
-def main(dict0):
-    from crayon import c_BLUE, c_GREEN, c_YELLOW, c_RED, c_CYAN, c_MAGENTA
-    for k, v in dict0.items():
-        if k == 'ranged-onts':
-            continue
-        if k == 'ont-id':
-            print(f'{c_BLUE}{k}\t\t{c_GREEN}{v}')
-            continue
-        if 'errors' in k:
-            numv = int(v)
-            if numv == 0:
-                print(f'{c_BLUE}{k}\t{c_MAGENTA}{v}')
-            else:
-                print(f'{c_BLUE}{k}\t{c_RED}{v}')
-            continue
-        if k == 'ds-sdber-rate':
-            print(f'{c_BLUE}{k}\t{c_YELLOW}{v}\n')
-            continue
-        print(f'{c_BLUE}{k}\t{c_YELLOW}{v}')
+        print(f'{c_CYAN}{name}')
+        for k, v in i.items():
+            if k == 'ranged-onts':
+                continue
+            if k == 'ont-id':
+                print(f'{c_BLUE}{k}\t\t{c_GREEN}{v}')
+                continue
+            if 'errors' in k:
+                numv = int(v)
+                if numv == 0:
+                    print(f'{c_BLUE}{k}\t{c_MAGENTA}{v}')
+                else:
+                    print(f'{c_BLUE}{k}\t{c_RED}{v}')
+                continue
+            if k == 'ds-sdber-rate':
+                print(f'{c_BLUE}{k}\t{c_YELLOW}{v}\n')
+                continue
+            print(f'{c_BLUE}{k}\t{c_YELLOW}{v}')
     q = input(f'{c_CYAN}Press enter to exit...')
     if q is None:
         exit()
@@ -76,4 +74,5 @@ def main(dict0):
 
 shelf, slot, port = get_port()
 str1, e9 = netcon(shelf, slot, port)
-test(str1, e9)
+a = test(str1, e9)
+main(a)
