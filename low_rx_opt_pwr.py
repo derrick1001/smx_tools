@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+from datetime import date
 from requests import get
 from datetime import timedelta
 from sys import argv, path
@@ -65,21 +66,28 @@ def cx_detail(e9, tbl, cnct):
                             auth=('admin', 'Thesearethetimes!'),
                             verify=False)
             r1 = get_phone.json()
-            phone = r1.get('locations')[0].get('contacts')[0].get('phone')
+            try:
+                phone = r1.get('locations')[0].get('contacts')[0].get('phone')
+                if phone is None:
+                    phone = 'No phone'
+            except:
+                phone = 'No phone'
             sp = i.split(',')
             acct = sp[0]
             name = sp[1]
             loc = ' '.join(sp[2:5])
             em = sp[-1]
+            if em == "":
+                em = 'No email'
         return f'{acct}\n{name}\n{phone}\n{em}\n{loc}'
 
     def email(e9, instid, port):
         import smtplib
         from email.message import EmailMessage
-        with open(f'{e9}_{instid}.txt', 'r') as f:
+        with open(f'{e9}_{date.today()}.txt', 'r') as f:
             msg = EmailMessage()
             msg.set_content(f.read())
-        msg['Subject'] = f'Low light levels for ONT-id {port} on {e9}'
+        msg['Subject'] = f'Low light alarms on {e9}'
         msg['From'] = 'nms@mycvecfiber.com'
         msg['To'] = 'dishman@cvecfiber.com'
         msg['Cc'] = ['kmarshala@cvecfiber.com', 'jjackson@cvecfiber.com']
@@ -93,7 +101,7 @@ def cx_detail(e9, tbl, cnct):
             '/home/derrick/Documents/CVEC_Stuff/low-rx-pwr/')
         cnct.send_command_timing(
             f'manual acknowledge instance-id {instid}')
-        run(f'mv {e9}_{instid}.txt {path[-1]}/{e9}/{e9}_{instid}.txt',
+        run(f'mv {e9}_{date.today()}.txt {path[-1]}/{e9}/{e9}_{date.today()}.txt',
             shell=True
             )
 
@@ -107,11 +115,11 @@ def cx_detail(e9, tbl, cnct):
             port = gport[1]
             ont_info = ont_detail(e9, port)
             cx_info = affected(e9, instid, port)
-            all_info = f'{cx_info}\n{ont_info}'
-            with open(f'{e9}_{instid}.txt', 'w') as f:
+            all_info = f'{cx_info}{ont_info}\n'
+            with open(f'{e9}_{date.today()}.txt', 'a') as f:
                 f.write(all_info)
-            email(e9, instid, port)
-            clean_up(e9, instid, cnct)
+        email(e9, instid, port)
+        clean_up(e9, instid, cnct)
         cnct.disconnect()
 
     process_alarm(tbl)
