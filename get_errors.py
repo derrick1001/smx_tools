@@ -1,9 +1,13 @@
 #!/usr/bin/python3
 
+from warnings import filterwarnings
 import re
 from netmiko import ConnectHandler
 from sys import argv, path
 from requests import get
+
+
+filterwarnings("ignore", message="Unverified HTTPS request")
 
 
 def get_port():
