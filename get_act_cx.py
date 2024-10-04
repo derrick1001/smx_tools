@@ -5,6 +5,9 @@ from requests import get
 from sys import argv, path
 
 
+# Call script with IP address, hostname
+
+
 def get_info():
     path.append('/home/derrick/Derrick-shell-scripts/python/modules/')
     from crayon import c_BLUE, c_WHITE
@@ -16,10 +19,10 @@ def get_info():
 
 def get_act(func):
     def wrapper(*args):
-        netcon_f = func(*args)
-        if isinstance(netcon_f[1], list):
-            for id in netcon_f[1]:
-                get_cx = get(f'https://10.20.7.10:18443/rest/v1/ems/subscriber/device/{netcon_f[0]}/port/{id}%2Fx1',
+        onts = func(*args)
+        if isinstance(onts, list):
+            for id in onts:
+                get_cx = get(f'https://10.20.7.10:18443/rest/v1/ems/subscriber/device/{argv[2]}/port/{id}%2Fx1',
                              auth=('admin', 'Thesearethetimes!'),
                              verify=False)
                 r = get_cx.json()
@@ -33,9 +36,10 @@ def get_act(func):
                 print(f'{city} {state} {z}\n')
 
         else:
-            for lst in netcon_f[1]:
+            print('Went here')
+            for lst in onts:
                 for id in lst:
-                    get_phone = get(f'https://10.20.7.10:18443/rest/v1/ems/subscriber/device/{netcon_f[0]}/port/{id}%2Fx1',
+                    get_phone = get(f'https://10.20.7.10:18443/rest/v1/ems/subscriber/device/{argv[2]}/port/{id}%2Fx1',
                                     auth=('admin', 'Thesearethetimes!'),
                                     verify=False)
                     r = get_phone.json()
@@ -47,34 +51,22 @@ def get_act(func):
                     print(r.get('name'))
                     print(loc)
                     print(f'{city} {state} {z}\n')
-        return netcon_f
+        return onts
     return wrapper
 
 
 def get_miss(func):
     def wrapper1(*args):
         print('This is the get_miss function')
-        netcon_f = func(*args)
-        if isinstance(netcon_f[1], list):
-            for id in netcon_f[1]:
-                ont_status = get(f'https://10.20.7.10:18443/rest/v1/config/device/{netcon_f[0]}/ontport/{id}',
-                                 auth=('admin', 'Thesearethetimes!'),
-                                 verify=False)
-                r = ont_status.json()
-                print(r)
-            else:
-                for lst in netcon_f[1]:
-                    for id in lst:
-                        ont_status = get(f'https://10.20.7.10:18443/rest/v1/config/device/{netcon_f[0]}/ontport/{id}',
-                                         auth=('admin', 'Thesearethetimes!'),
-                                         verify=False)
-                        r = ont_status.json()
-                        print(r)
-
-        # missing = get(f'https://10.20.7.10:18443/rest/v1/config/device/{netcon_f[0]}/ont/missingONTs?offset=0&limit=20',
-                # auth=('admin', 'Thesearethetimes!'),
-                # verify=False)
-        return netcon_f
+        onts = func(*args)
+        missing = get(f'https://10.20.7.10:18443/rest/v1/config/device/{argv[2]}/ont/missingONTs?offset=0&limit=20',
+                      auth=('admin', 'Thesearethetimes!'),
+                      verify=False)
+        r = missing.json()
+        for i in r:
+            ont_id = i.get('ont-id')
+            print(ont_id)
+        return onts
     return wrapper1
 
 
@@ -104,11 +96,7 @@ def netcon(shelf, slot, port):
         onts = cnct.send_command_timing(
             f'show interface pon {shelf}/{slot}/xp{port} ranged-onts \
             statistics | inc ont-id').split()[1::2]
-    cnct.send_command_timing('configure')
-    e9 = cnct.send_command_timing(
-        'show full-configuration hostname').split('\n')[0].lstrip('hostname ')
-    cnct.send_command_timing('exit')
-    return e9, onts
+    return onts
 
 
 shelf, slot, port = get_info()
