@@ -12,8 +12,8 @@ def end(wr_main: Callable) -> str:
         ont_ids = (id.get("ont-id") for id in ranged_onts)
         names = (cx_detail(e9, id).json().get("name") for id in ont_ids)
         for name in names:
-            for details in ranged_onts:
-                print(f"{name}\n{details}\n")
+            print(name)
+        print(ont_ids)
         return
 
     return wrap_wr_main
