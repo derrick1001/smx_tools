@@ -12,8 +12,8 @@ def end(wr_main: Callable) -> str:
         ont_ids = (id.get("ont-id") for id in ranged_onts)
         names = (cx_detail(e9, id).json().get("name") for id in ont_ids)
         for name in names:
-            print(name)
-        print(ont_ids)
+            for details in ranged_onts:
+                print(f"{name}\n{details}\n")
         return
 
     return wrap_wr_main
@@ -49,8 +49,7 @@ def ranged_onts(main: Callable) -> Callable:
         ronts, e9 = t
         match: List[str] = re.split(r"ont CXNK [A-Z0-9]{6,7}", ronts)
         match_lst: Generator = (i.split() for i in match[1:])
-        ranged_onts: Generator = (
-            dict(zip(i[::2], i[1::2])) for i in match_lst)
+        ranged_onts: List = [dict(zip(i[::2], i[1::2])) for i in match_lst]
         return ranged_onts, e9
 
     return wr_main
