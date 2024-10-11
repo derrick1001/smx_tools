@@ -66,7 +66,7 @@ def affected(e9, instid, port, names=set()):
             phone = r1.get('locations')[0].get('contacts')[0].get('phone')
             if phone is None:
                 phone = 'No phone'
-        except:
+        except Exception:
             phone = 'No phone'
         sp = i.split(',')
         acct = sp[0]
