@@ -3,31 +3,32 @@
 from netmiko import ConnectHandler
 from sys import argv
 
-
-def connect():
-    device = {'device_type': 'cisco_ios',
-              'host':   '192.168.1.1',
-              'username':   'sysadmin',
-              'password':   'sysadmin',
-              'fast_cli':   False,
-              }
-
-    cnct = ConnectHandler(**device)
-    return cnct
+# Add functionality for 3201 cards
 
 
-def shelf():
-    # configure
-    # interface pon x/x/x
-    # no shut
-    # top
-    shelves = int(argv[1])
-    with connect() as cnct:
-        cnct.send_command_timing('configure')
+# Call with starting shelf and ending shelf
+def turn_on_ports():
+    device = {
+        "device_type": "cisco_ios",
+        "host": "192.168.1.1",
+        "username": "sysadmin",
+        "password": "sysadmin",
+        "fast_cli": False,
+    }
+    shelves = range(int(argv[1]), int(argv[2]) + 1)
+    slot = range(1, 3)
+    port = range(1, 17)
+    with ConnectHandler(**device) as cnct:
+        cnct.send_command_timing("configure")
         for shelf in shelves:
-            for p in range(1, 17):
-                for sl in range(1, 3):
+            for sl in slot:
+                for p in port:
                     cnct.send_command_timing(
-                        f'interface pon {shelf}/{sl}/xp{p}')
-                    cnct.send_command_timing('shutdown')
-                    cnct.send_command_timing('top')
+                        f"interface pon {shelf}/{sl}/xp{p}")
+                    cnct.send_command_timing("no shutdown")
+                    cnct.send_command_timing("top")
+                    print(f"{shelf}/{sl}/xp{p} is on")
+
+
+if __name__ == "__main__":
+    turn_on_ports()
