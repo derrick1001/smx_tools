@@ -3,10 +3,23 @@
 from netmiko import ConnectHandler
 from sys import argv
 
+<<<<<<< HEAD
 # Add functionality for 3201 cards
 
 
 # Call with starting shelf and ending shelf
+=======
+#   TODO:
+#   Add functionality for 3201 cards
+
+
+#   NOTE:
+#   Call with starting shelf and ending shelf
+
+
+#   TODO:
+#   Test to see if threading will speed this up
+>>>>>>> 48e52262ea6dbd8ca6f3e5384ed06f327f78295a
 def turn_on_ports():
     device = {
         "device_type": "cisco_ios",
@@ -23,8 +36,12 @@ def turn_on_ports():
         for shelf in shelves:
             for sl in slot:
                 for p in port:
+<<<<<<< HEAD
                     cnct.send_command_timing(
                         f"interface pon {shelf}/{sl}/xp{p}")
+=======
+                    cnct.send_command_timing(f"interface pon {shelf}/{sl}/xp{p}")
+>>>>>>> 48e52262ea6dbd8ca6f3e5384ed06f327f78295a
                     cnct.send_command_timing("no shutdown")
                     cnct.send_command_timing("top")
                     print(f"{shelf}/{sl}/xp{p} is on")
