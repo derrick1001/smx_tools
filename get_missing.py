@@ -3,7 +3,7 @@
 
 from warnings import filterwarnings
 from sys import argv, path
-from calix.missing import get_miss
+from calix.missing import missing
 from calix.subscriber import subs
 
 path.append("/home/derrick/Derrick-shell-scripts/python/modules")
@@ -13,7 +13,7 @@ filterwarnings("ignore", message="Unverified HTTPS request")
 def get_missing():
     from crayon import c_BLUE, c_CYAN, c_GREEN, c_YELLOW, c_MAGENTA, c_RED
 
-    miss = get_miss(argv[1])
+    miss = missing(argv[1])
     for i in miss.json():
         if i.get("shelf-id") is None:
             continue
