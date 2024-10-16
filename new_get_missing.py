@@ -5,10 +5,10 @@ from sys import argv
 from calix.cx_detail import cx
 from calix.ont_detail import ont
 from calix.connection import calix_e9
-from calix.affected import affected
+from calix.affected_decorator import affected_decorator
 
 
-@affected
+@affected_decorator
 def f(a, b, c):
     pass
 
