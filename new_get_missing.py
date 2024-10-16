@@ -1,10 +1,17 @@
 #!/usr/bin/python3
 
+from sys import argv
+
 from calix.cx_detail import cx
 from calix.ont_detail import ont
+from calix.connection import calix_e9
+from calix.affected import affected
 
 
-r = cx("Liberty-E9-1", "82")
-a = ont("Liberty-E9-1", "82")
-print(f"{r}\n")
-print(a.get("oper-status"))
+@affected
+def f(a, b, c):
+    pass
+
+
+a = f("Seminole-E9-1", ["10.33491", "10.33765"], "11518")
+print(a)
