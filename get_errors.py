@@ -1,7 +1,9 @@
 #!/usr/bin/python3
 
 import re
-from calix import ssp, netcon, cx_detail
+from calix.ssp import ssp
+from calix.connection import calix_e9
+from calix.cx_detail import cx_detail
 from crayon import c_BLUE, c_GREEN, c_YELLOW, c_RED, c_CYAN, c_MAGENTA
 from typing import Generator, List, Callable
 
@@ -57,6 +59,7 @@ def ranged_onts(main: Callable) -> Callable:
 
 @ranged_onts
 def main(cnct: Callable) -> tuple[str, str]:
+    shelf, slot, port = ssp()
     ranged_onts: str = cnct.send_command_timing(
         f"show interface pon {shelf}/{slot}/xp{port} ranged-onts statistics"
     )
@@ -70,7 +73,5 @@ def main(cnct: Callable) -> tuple[str, str]:
     return ranged_onts, e9
 
 
-t: tuple[str, str, str] = ssp()
-shelf, slot, port = t
 if __name__ == "__main__":
-    main(netcon(*t))
+    main(calix_e9())
