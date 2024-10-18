@@ -7,9 +7,9 @@ path.append("/home/derrick/Derrick-shell-scripts/python/modules/")
 
 
 def low_light():
-    from calix import netcon
+    from calix.connection import calix_e9
 
-    cnct = netcon()
+    cnct = calix_e9()
     no_last = slice(None, -1)
 
     output = cnct.send_command_timing("show alarm act | inc low")
