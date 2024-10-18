@@ -1,18 +1,17 @@
 # /usr/bin/python3
 
+from sys import argv
 
-from warnings import filterwarnings
-from sys import argv, path
+
 from calix.missing import missing
 from calix.subscriber import subs
+from crayon import c_BLUE, c_CYAN, c_GREEN, c_YELLOW, c_MAGENTA, c_RED
 
-path.append("/home/derrick/Derrick-shell-scripts/python/modules")
-filterwarnings("ignore", message="Unverified HTTPS request")
+# TODO:
+#   Change the API call to the calix.cx_detail module for better accuracy
 
 
 def get_missing():
-    from crayon import c_BLUE, c_CYAN, c_GREEN, c_YELLOW, c_MAGENTA, c_RED
-
     miss = missing(argv[1])
     for i in miss.json():
         if i.get("shelf-id") is None:
