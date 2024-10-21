@@ -1,14 +1,9 @@
 #!/usr/bin/python3
 
-
-from sys import path
-
-path.append("/home/derrick/Derrick-shell-scripts/python/modules/")
+from calix.connection import calix_e9
 
 
-def low_light():
-    from calix.connection import calix_e9
-
+def red_temp():
     cnct = calix_e9()
     no_last = slice(None, -1)
 
@@ -23,4 +18,4 @@ def low_light():
         exit()
 
 
-low_light()
+red_temp()
