@@ -17,9 +17,9 @@ def clr_alarm():
         'show alarm active | include loss-of-pon')
     con.send_command_timing('configure')
     hostname = con.send_command_timing('show full-configuration hostname')
+    con.send_command_timing('exit')
     strip_prompt = hostname.split('\n')
     e9 = strip_prompt[0].lstrip('hostname ')
-    con.disconnect()
     alarms = output.split('\n')
     for alarm in alarms:
         data = alarm.split()
@@ -29,6 +29,7 @@ def clr_alarm():
         gport = data[13].split("'")
         port = gport[1]
         affected(instid, port, e9)
+        con.send_command_timing(f'manual shelve instance-id {instid}')
 
 
 def affected(instid, port, e9):
@@ -55,7 +56,6 @@ def email(e9, instid, port):
     msg['Subject'] = f'All ONT missing {e9} on port {port}'
     msg['From'] = 'nms@mycvecfiber.com'
     msg['To'] = 'dishman@cvecfiber.com'
-    # msg['Cc'] = 'kmarshala@cvecfiber.com'
     s = smtplib.SMTP('10.20.7.31')
     s.send_message(msg)
     clean_up(e9, instid)
