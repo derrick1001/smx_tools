@@ -33,3 +33,6 @@ def alarm_table(e9=argv[2]):
 
 if __name__ == '__main__':
     alarm_table(e9=argv[2])
+    q = input('Press any key to exit...')
+    if q:
+        quit()
