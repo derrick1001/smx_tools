@@ -1,2 +1,6 @@
 *.txt
+<<<<<<< HEAD
 *.pyc
+=======
+__pycache__
+>>>>>>> c2ee12d4329407b477b009bcf96621ff843fd9f1
