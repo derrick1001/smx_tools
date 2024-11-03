@@ -42,8 +42,7 @@ def alarm_table(e9=argv[2]):
 
 
 if __name__ == "__main__":
-    a = alarm_table(e9=argv[2])
-    print(a)
+    alarm_table(e9=argv[2])
     # q = input("Press any key to exit...")
     # if q:
     #    quit()
