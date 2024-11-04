@@ -5,7 +5,7 @@ from sys import argv
 
 from calix.affected_decorator import affected_decorator
 from calix.connection import calix_e9
-from calix.crayon import c_BLUE
+from crayon import c_BLUE, c_WHITE, c_YELLOW
 
 # NOTE:
 #   Call this script with the IP address and hostname
@@ -26,12 +26,13 @@ def proc_alarms(func):
 @proc_alarms
 def alarm_table(e9=argv[2]):
     cnct = calix_e9()
-    tbl = input("Alarm name: ")
+    tbl = input(f"{c_BLUE}Alarm name: {c_WHITE}")
     dying = cnct.send_command_timing("show alarm active | include dying")
     missing = cnct.send_command_timing("show alarm active | include missing")
 
     # NOTE: Send this through another decorator first to get the ont_ids
-    lop = cnct.send_command_timing("show alarm active | include loss")
+
+    # lop = cnct.send_command_timing("show alarm active | include loss")
     if tbl == "dying":
         return dying
     elif tbl == "missing":
@@ -42,7 +43,10 @@ def alarm_table(e9=argv[2]):
 
 
 if __name__ == "__main__":
-    alarm_table(e9=argv[2])
-    # q = input("Press any key to exit...")
-    # if q:
-    #    quit()
+    subs = alarm_table(e9=argv[2])
+    count = 0
+    for sub in subs:
+        print("")
+        print(sub)
+        count += 1
+    print(f"{c_YELLOW}{count} Alarms")
