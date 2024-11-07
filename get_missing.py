@@ -13,7 +13,7 @@ from crayon import c_BLUE, c_WHITE, c_YELLOW
 
 
 def proc_alarms(func):
-    # @affected_decorator
+    @affected_decorator
     def inner(**kwargs):
         alrm_tbl = func()
         if "loss-of-pon" in alrm_tbl:
