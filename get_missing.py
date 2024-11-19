@@ -58,11 +58,15 @@ def alarm_table(e9=argv[2]):
         missing = cnct.send_command_timing("show alarm active | include missing")
         cnct.disconnect()
         return missing
+    elif tbl == "red":
+        red_temp = cnct.send_command_timing("show alarm active | include red-temp")
+        cnct.disconnect()
+        return red_temp
     elif tbl == "lop":
         lop = cnct.send_command_timing("show alarm active | include loss")
         return lop
     else:
-        print('Valid completions: "dying", "missing", "lop"')
+        print('Valid completions: "dying", "missing", "lop", "red"')
         alarm_table(e9=argv[2])
 
 
