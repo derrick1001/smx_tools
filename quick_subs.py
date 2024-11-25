@@ -11,6 +11,6 @@ def main(e9=None):
 
 
 if __name__ == "__main__":
-    subs = main(E9)
+    subs = main(e9=E9)
     for sub in subs:
         print(sub)
