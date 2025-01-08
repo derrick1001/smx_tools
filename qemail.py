@@ -1,12 +1,13 @@
 import smtplib
 from email.message import EmailMessage
-from sys import argv
 
 subj = input("Subject: ")
-cc = list(input("Cc: "))
+fhand = open("cont.txt", "r")
+cont = fhand.read()
 
 
 def email(subj: str, cont: str) -> None:
+    cc = list(input("Cc: "))
     msg = EmailMessage()
     msg.set_content(cont)
     msg["Subject"] = subj
@@ -18,5 +19,6 @@ def email(subj: str, cont: str) -> None:
     s.quit()
 
 
-with open("cont.txt", "r") as cont:
+if __name__ == "__main__":
     email(subj, cont)
+    fhand.close()
