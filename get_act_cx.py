@@ -69,9 +69,9 @@ def get_act(func):
 
 
 # @get_act
-def get_miss(main_f):
-    def missing():
-        func = main_f()
+# def get_miss(main_f):
+#    def missing():
+#        func = main_f()
 
 
 @get_act
@@ -106,4 +106,5 @@ def main():  # NOTE: Returns list[lists], or a single list
     return onts
 
 
-main()
+if __name__ == "__main__":
+    main()
