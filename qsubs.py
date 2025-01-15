@@ -1,16 +1,23 @@
-from calix.affected_decorator import affected_decorator
-from crayon import c_BLUE, c_WHITE
+#!/usr/bin/python3
 
-E9 = input(f"{c_BLUE}E9{c_WHITE}: ")
-ONTS = list(input(f"{c_BLUE}ONT_IDS{c_WHITE}: ").split())
+from sys import argv
+
+from calix.affected_decorator import affected_decorator
+
+from crayon import c_BLUE, c_CYAN, c_WHITE
+
+onts = list(input(f"{c_BLUE}ONT_IDS{c_WHITE}: ").split())
 
 
 @affected_decorator
-def main(e9=None):
-    return ONTS
+def main(e9=argv[1]):
+    return onts
 
 
 if __name__ == "__main__":
-    subs = main(e9=E9)
+    subs = main(e9=argv[1])
     for sub in subs:
         print(sub)
+    q = input(f"{c_CYAN}Press any key to exit...")
+    if q is None:
+        exit()
