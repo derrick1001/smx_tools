@@ -31,7 +31,6 @@ def get_act(func):
                 print(f"{city} {state} {z}\n")
 
         else:
-            print("Went here")
             for lst in onts:
                 if lst is None:
                     continue
@@ -66,12 +65,6 @@ def get_act(func):
         return onts
 
     return wrapper
-
-
-# @get_act
-# def get_miss(main_f):
-#    def missing():
-#        func = main_f()
 
 
 @get_act
