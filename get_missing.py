@@ -12,6 +12,7 @@ from crayon import c_BLUE, c_WHITE, c_YELLOW
 
 # TODO:
 # Test eilf "lop", i think everything else is working
+# Tested, need to parse the list from the alarm table
 
 
 @proc_alarms
@@ -48,7 +49,6 @@ if __name__ == "__main__":
     subs = alarm_table(e9=argv[2])
     count = 0
     for sub in subs:
-        print("")
         print(sub)
         count += 1
     print(f"{c_YELLOW}{count} Alarms")
