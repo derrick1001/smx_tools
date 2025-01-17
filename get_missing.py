@@ -48,7 +48,6 @@ def alarm_table(e9=argv[2]):
 if __name__ == "__main__":
     subs = alarm_table(e9=argv[2])
     count = 0
-    print(subs)
     for sub in subs:
         print(sub)
         count += 1
