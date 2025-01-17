@@ -20,7 +20,7 @@ def alarm_table(e9=argv[2]):
     cnct = calix_e9()
     tbl = input(f"{c_BLUE}Alarm name: {c_WHITE}")
     if tbl == "dying":
-        dying = cnct.send_command_timing("show alarm active | include dying")
+        dying = cnct.send_command_timing("show alarm active | include ont-dying-gasp")
         cnct.disconnect()
         return dying
     elif tbl == "missing":
@@ -48,6 +48,7 @@ def alarm_table(e9=argv[2]):
 if __name__ == "__main__":
     subs = alarm_table(e9=argv[2])
     count = 0
+    print(subs)
     for sub in subs:
         print(sub)
         count += 1
