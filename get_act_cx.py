@@ -2,6 +2,7 @@
 
 from sys import argv
 
+from calix.affected_decorator import affected_decorator
 from calix.connection import calix_e9
 from calix.ssp import ssp
 from requests import get
@@ -67,8 +68,8 @@ def get_act(func):
     return wrapper
 
 
-@get_act
-def main():  # NOTE: Returns list[lists], or a single list
+@affected_decorator
+def main(e9=argv[2]):  # NOTE: Returns list[lists], or a single list
     shelf, slot, port = ssp()
     cnct = calix_e9()
     ports = range(1, 17)
@@ -100,4 +101,8 @@ def main():  # NOTE: Returns list[lists], or a single list
 
 
 if __name__ == "__main__":
-    main()
+    subs = main(e9=argv[2])
+    count = 0
+    for sub in subs:
+        print(sub)
+        count += 1
