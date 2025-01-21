@@ -5,7 +5,7 @@ from sys import argv
 from calix.affected_decorator import affected_decorator
 from crayon import c_BLUE, c_CYAN, c_WHITE
 
-onts = list(input(f"{c_BLUE}ONT_IDS{c_WHITE}: ").split())
+onts = input(f"{c_BLUE}ONT_IDS{c_WHITE}: ").split()
 
 
 @affected_decorator
