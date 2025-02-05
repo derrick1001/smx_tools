@@ -10,7 +10,7 @@ onts = input(f"{c_BLUE}ONT_IDS{c_WHITE}: ").split()
 
 @affected_decorator
 def main(e9=argv[2]):
-    return onts
+    yield onts
 
 
 if __name__ == "__main__":
