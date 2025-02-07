@@ -10,10 +10,6 @@ from crayon import c_BLUE, c_WHITE, c_YELLOW
 #   Call this script with the IP address and hostname
 #   of the chassis
 
-# TODO:
-# Test eilf "lop", i think everything else is working
-# Tested, need to parse the list from the alarm table
-
 
 @proc_alarms
 def alarm_table(e9=argv[2]):
