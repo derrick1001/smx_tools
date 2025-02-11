@@ -34,7 +34,7 @@ def alarm_table(e9=argv[2]):
         cnct.disconnect()
         return alrms
     elif tbl == "lop":
-        lop = cnct.send_command_timing("show alarm active | include loss")
+        lop = cnct.send_command_timing("show alarm active | include loss-of-pon")
         return lop
     else:
         print('Valid completions: "all", "dying", "missing", "lop", "red"')
