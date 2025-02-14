@@ -10,6 +10,9 @@ from crayon import c_BLUE, c_WHITE, c_YELLOW
 #   Call this script with the IP address and hostname
 #   of the chassis
 
+# TODO:
+#   Add alarm option for rogue detection
+
 
 @proc_alarms
 def alarm_table(e9=argv[2]):
@@ -44,8 +47,6 @@ def alarm_table(e9=argv[2]):
 
 if __name__ == "__main__":
     subs = alarm_table(e9=argv[2])
-    count = 0
-    for sub in subs:
+    for count, sub in enumerate(subs):
         print(sub)
-        count += 1
     print(f"{c_YELLOW}{count} Alarms")

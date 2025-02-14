@@ -116,7 +116,5 @@ def main(e9=argv[2]):  # NOTE: Returns list[lists], or a single list
 
 if __name__ == "__main__":
     subs = main(e9=argv[2])
-    count = 0
-    for sub in subs:
+    for count, sub in enumerate(subs):
         print(sub)
-        count += 1
