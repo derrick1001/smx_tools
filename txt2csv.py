@@ -11,11 +11,11 @@ def rows(get_count):
         sl = slice(s, f)
         while count > 0:
             sl = slice(s, f)
-            b = args[0][sl]
+            sub = args[0][sl]
             s += 6
             f += 6
             count -= 1
-            yield b
+            yield sub
 
     return inner
 
@@ -33,8 +33,8 @@ if __name__ == "__main__":
     with open("subs.txt", "r") as subs:
         col = ["Acct", "Name", "Phone", "Port/Fiber", "Email", "Address"]
         sub_lst = [i.rstrip("\n") for i in subs]
-        z = get_count(sub_lst)
-        data = [i for i in z]
+        count = get_count(sub_lst)
+        data = [i for i in count]
         data.insert(0, col)
     with open("cx.csv", "w", newline="") as f:
         writer = csv.writer(f)
