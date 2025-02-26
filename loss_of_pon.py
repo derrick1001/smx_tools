@@ -1,27 +1,22 @@
 #!/usr/bin/python3
 
-import re
+from sys import argv
 
-from calix.affected_decorator import affected_decorator
 from calix.connection import calix_e9
-
-lop = "ne-event-time 2024-10-28T15:23:45-05:00 id 5005 instance-id 7.156026 name loss-of-pon perceived-severity MAJOR category PON address /config/interface/pon[port='4/1/xp10']"
-match = [re.search("[2-5]/[1-2]/xp[0-9]{1,2}", alrm) for alrm in lop.split("\n")]
-pon_port = [m.group().lstrip("'").rstrip("'") for m in match if m is not None]
-cnct = calix_e9()
-m = [
-    cnct.send_command_timing(
-        f"show interface pon {port} subscriber-info | display curly-braces | include ont"
-    )
-    for port in pon_port
-]
-m1 = (re.findall("[0-9]{4,5}", id) for id in m)
+from calix.proc_alrms import proc_alarms
+from crayon import c_YELLOW
 
 
-@affected_decorator
-def f1(e9="Hammett-E9-1"):
-    m1 = (re.findall("[0-9]{4,5}", id) for id in m)
-    return next(m1)
+@proc_alarms
+def alrm_tbl(e9=argv[2]):
+    cnct = calix_e9()
+    lop = cnct.send_command_timing("show alarm active | include loss-of-pon")
+    cnct.disconnect()
+    return lop
 
 
-f1(e9="Hammett-E9-1")
+if __name__ == "__main__":
+    subs = alrm_tbl(e9=argv[2])
+    for count, sub in enumerate(subs):
+        print(sub)
+    print(f"{c_YELLOW}{count} Alarms")
