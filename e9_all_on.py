@@ -5,7 +5,6 @@ from sys import argv
 from netmiko import ConnectHandler
 
 #   TODO:
-#   Add functionality for 3201 cards
 #   Test to see if threading will speed this up
 
 
@@ -30,7 +29,7 @@ def turn_on_ports():  # NOTE: Call with starting shelf and ending shelf
                 print(f"{shelf}/{sl}")
                 if "NG1601" in card.split()[1]:
                     print("Card is 1601")
-                    port = range(15, 17)
+                    port = range(1, 17)
                 else:
                     print("Card is 3201")
                     port = range(1, 33)
