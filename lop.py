@@ -1,10 +1,11 @@
 #!/usr/bin/python3
 
+from subprocess import run
 from sys import argv
 
 from calix.connection import calix_e9
+from calix.e_mail import email
 from calix.proc_alrms import proc_alarms
-from crayon import c_YELLOW
 
 
 @proc_alarms
@@ -17,6 +18,9 @@ def alrm_tbl(e9=argv[2]):
 
 if __name__ == "__main__":
     subs = alrm_tbl(e9=argv[2])
-    for count, sub in enumerate(subs):
-        print(sub)
-    print(f"{c_YELLOW}{count} Alarms")
+    with open("lop_subs.txt", "a") as f:
+        for sub in subs:
+            f.write(f"{sub}\n")
+    with open("lop_subs.txt", "r+") as f:
+        email(f"Loss of PON on {argv[2]}", f.read())
+    run("rm lop_subs.txt", shell=True)
