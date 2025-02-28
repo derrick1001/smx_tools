@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 from sys import argv
 
 from calix.connection import calix_e9
