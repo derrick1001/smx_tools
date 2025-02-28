@@ -1,46 +1,52 @@
 #!/usr/bin/python3
 
-import re
 from sys import argv
 
-from calix.affected_decorator import affected_decorator
 from calix.connection import calix_e9
+from calix.proc_alrms import proc_alarms
+from crayon import c_BLUE, c_WHITE, c_YELLOW
 
 # NOTE:
 #   Call this script with the IP address and hostname
 #   of the chassis
 
-
-def proc_alarms(func):
-    @affected_decorator
-    def inner(**kwargs):
-        miss_gasp = func()
-        match = [re.search("'[0-9]{1,5}'", alrm) for alrm in miss_gasp.split("\n")]
-        ont_id = [m.group().lstrip("'").rstrip("'") for m in match if m is not None]
-        return ont_id
-
-    return inner
+# TODO:
+#   Add alarm option for rogue detection
 
 
 @proc_alarms
 def alarm_table(e9=argv[2]):
     cnct = calix_e9()
-    missing_gasp = cnct.send_command_timing(
-        'show alarm active | include "dying|missing"'
-    )
-    return missing_gasp
+    tbl = input(f"{c_BLUE}Alarm name: {c_WHITE}")
+    if tbl == "dying":
+        dying = cnct.send_command_timing("show alarm active | include ont-dying-gasp")
+        cnct.disconnect()
+        return dying
+    elif tbl == "missing":
+        missing = cnct.send_command_timing("show alarm active | include missing")
+        cnct.disconnect()
+        return missing
+    elif tbl == "red":
+        red_temp = cnct.send_command_timing("show alarm active | include red-temp")
+        cnct.disconnect()
+        return red_temp
+    elif tbl == "all":
+        alrms = cnct.send_command_timing(
+            'show alarm active | include "dying|missing|red-temp"'
+        )
+        cnct.disconnect()
+        return alrms
+    elif tbl == "lop":
+        lop = cnct.send_command_timing("show alarm active | include loss-of-pon")
+        cnct.disconnect()
+        return lop
+    else:
+        print('Valid completions: "all", "dying", "missing", "lop", "red"')
+        alarm_table(e9=argv[2])
 
 
 if __name__ == "__main__":
-    from crayon import c_CYAN, c_YELLOW
-
     subs = alarm_table(e9=argv[2])
-    count = 0
-    for sub in subs:
-        print("")
+    for count, sub in enumerate(subs):
         print(sub)
-        count += 1
     print(f"{c_YELLOW}{count} Alarms")
-    q = input(f"{c_CYAN}Press any key to exit...")
-    if q:
-        quit()
