@@ -4,14 +4,12 @@ from sys import argv
 
 from calix.connection import calix_e9
 from calix.proc_alrms import proc_alarms
+
 from crayon import c_BLUE, c_WHITE, c_YELLOW
 
 # NOTE:
 #   Call this script with the IP address and hostname
 #   of the chassis
-
-# TODO:
-#   Add alarm option for rogue detection
 
 
 @proc_alarms
