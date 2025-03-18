@@ -6,7 +6,7 @@ cnct = calix_e9()
 sh_ont = cnct.send_command_timing(
     "show interface pon 2/1/xp1 discovered-onts | notab | inc CXNK"
 ).split()[2::3]
-sh_model = cnct.send_command_timing(
+models = cnct.send_command_timing(
     "show interface pon 2/1/xp1 discovered-onts | notab | inc model"
 ).split()[1::2]
 cnct.disconnect()
@@ -20,18 +20,15 @@ for i in sh_ont:
     elif len(i) == 6:
         i = f"00{i}"
     cxnk.append(i)
-model = [i for i in sh_model]
-for sn, mod in zip(cxnk, model):
-    if mod == "GP1100X":
+mod = {sn: mod for sn, mod in zip(cxnk, models)}
+
+for id, sn in zip(ont, mod):
+    if "DA3659" in sn:
         continue
-    print(f"{sn} is {mod}")
-
-
-for id, sn, mod in zip(ont, cxnk, model):
     payload = {
         "serial-number": sn,
         "ont-id": id,
-        "ont-profile-id": mod,
+        "ont-profile-id": mod[sn],
     }
     service = put(
         f"https://10.20.7.10:18443/rest/v1/config/device/CVEC-E9-1/ont?action=update&ont-id={id}&serial-number=CXNK{sn}",
