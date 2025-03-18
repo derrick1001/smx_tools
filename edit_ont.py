@@ -22,6 +22,8 @@ for i in sh_ont:
     cxnk.append(i)
 model = [i for i in sh_model]
 for sn, mod in zip(cxnk, model):
+    if mod == "GP1100X":
+        continue
     print(f"{sn} is {mod}")
 
 
@@ -29,7 +31,7 @@ for id, sn, mod in zip(ont, cxnk, model):
     payload = {
         "serial-number": sn,
         "ont-id": id,
-        "ont-profile-id": {mod},
+        "ont-profile-id": mod,
     }
     service = put(
         f"https://10.20.7.10:18443/rest/v1/config/device/CVEC-E9-1/ont?action=update&ont-id={id}&serial-number=CXNK{sn}",
