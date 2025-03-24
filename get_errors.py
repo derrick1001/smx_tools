@@ -1,11 +1,12 @@
-#!/usr/bin/python3
+#!/usr/local/bin/python3
 
 import re
-from calix.ssp import ssp
+from typing import Callable, Generator, List
+
 from calix.connection import calix_e9
 from calix.cx_detail import cx_detail
-from crayon import c_BLUE, c_GREEN, c_YELLOW, c_RED, c_CYAN, c_MAGENTA
-from typing import Generator, List, Callable
+from calix.ssp import ssp
+from crayon import c_BLUE, c_CYAN, c_GREEN, c_MAGENTA, c_RED, c_YELLOW
 
 
 def end(wr_main: Callable) -> str:
