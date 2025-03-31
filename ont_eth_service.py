@@ -1,16 +1,17 @@
 from requests import post
 
 payload = {
-    "vlan": 1000,
+    "changeGlobalVlan": True,
     "serviceType": "DATA_SERVICE",
     "device-name": "CVEC-E9-1",
     "ont-port-id": "x1",
     "admin-state": "enabled",
     "admin-status": "active",
-    "ont-id": "547",
+    "ont-id": "548",
     "subscriber-id": "2010",
     "policy-map": "Essential",
     "service-name": "Data",
+    "global-vlan-desc": "1000",
 }
 
 ont = post(
