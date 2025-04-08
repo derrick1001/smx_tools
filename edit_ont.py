@@ -1,6 +1,12 @@
-from calix.connection import calix_e9
-from requests import put
+from time import sleep
 
+from requests import delete, get, post, put
+
+from calix.connection import calix_e9
+from calix.del_ont import del_ont
+
+# Convert ont to this data structure for more ONTs in the future
+# ont = list(range(2001, end))
 ont = ["2001", "2002", "2003", "2004", "2005"]
 cnct = calix_e9()
 sh_ont = cnct.send_command_timing(
@@ -38,5 +44,53 @@ for id, sn in zip(ont, mod):
     )
     if service.status_code == 200:
         print("\nONT updated successfully!")
-    else:
-        print(service.json())
+    elif service.status_code == 500:
+        print("ONT id already exists, force deleting and reassigning")
+        sleep(2)
+        get_id = get(
+            f"https://10.20.7.10:18443/rest/v1/config/device/CVEC-E9-1/ont?serial-number=CXNK{sn}",
+            auth=("admin", "Thesearethetimes!"),
+            verify=False,
+        )
+        nid = get_id.json()[0].get("ont-id")
+        print("Deleting old ONT...")
+        sleep(2)
+        del_ont(nid)
+        del_ont(id)
+        payload = {
+            "ont-id": id,
+            "ont-type": "Residential",
+            "isGlobalOnt": False,
+            "serial-number": sn,
+            "ont-profile-id": mod[sn],
+        }
+        print("Making new ONT...")
+        sleep(2)
+        mk_ont = post(
+            "https://10.20.7.10:18443/rest/v1/config/device/CVEC-E9-1/ont",
+            auth=("admin", "Thesearethetimes!"),
+            verify=False,
+            json=payload,
+        )
+        print("Applying services...")
+        sleep(2)
+        payload = {
+            "changeGlobalVlan": True,
+            "serviceType": "DATA_SERVICE",
+            "device-name": "CVEC-E9-1",
+            "ont-port-id": "x1",
+            "admin-state": "enabled",
+            "admin-status": "active",
+            "ont-id": id,
+            "subscriber-id": id,
+            "policy-map": "Essential",
+            "service-name": "Data",
+            "vlan": id,
+        }
+        ont = post(
+            f"https://10.20.7.10:18443/rest/v1/ems/service",
+            auth=("admin", "Thesearethetimes!"),
+            verify=False,
+            json=payload,
+        )
+        print("\nONT updated successfully!")
