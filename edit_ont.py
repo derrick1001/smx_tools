@@ -13,21 +13,13 @@ ont = range(2001, 2100)
 def get_discovered():
     cnct = calix_e9()
     sh_ont = cnct.send_command_timing(
-        "show interface pon 2/1/xp1 discovered-onts | notab | inc CXNK"
+        "show interface pon 2/1/xp1 discovered-onts | notab | inc discovered | exclude DA3659"
     ).split()[2::3]
     models = cnct.send_command_timing(
         "show interface pon 2/1/xp1 discovered-onts | notab | inc model"
     ).split()[1::2]
     cnct.disconnect()
-    cxnk = []
-    for i in sh_ont:
-        if "DA3659" in i:
-            continue
-        if len(i) == 7:
-            i = f"0{i}"
-        elif len(i) == 6:
-            i = f"00{i}"
-        cxnk.append(i)
+    cxnk = [f'0{i}' if len(i) == 7 else f'00{i}' for i in sh_ont]
     return {sn: mod for sn, mod in zip(cxnk, models)}
 
 
@@ -78,9 +70,8 @@ def rcode_500(id: str, sn: str, mod: str):
 
 if __name__ == "__main__":
     mod = get_discovered()
+    print(mod)
     for id, sn in zip(ont, mod):
-        if "DA3659" in sn:
-            continue
         payload = {
             "serial-number": sn,
             "ont-id": id,
