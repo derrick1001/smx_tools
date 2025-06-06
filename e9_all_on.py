@@ -30,12 +30,17 @@ def turn_on_ports():  # NOTE: Call with starting shelf and ending shelf
                 if "NG1601" in card.split()[1]:
                     print("Card is 1601")
                     port = range(1, 17)
-                else:
+                elif "XG3201" in card.split()[1]:
                     print("Card is 3201")
                     port = range(1, 33)
+                else:
+                    print("Card not in service, use show card to verify")
+                    quit()
                 for p in port:
-                    cnct.send_command_timing(f"interface pon {shelf}/{sl}/xp{p}")
-                    cnct.send_command_timing(f"interface pon {shelf}/{sl}/xp{p}")
+                    cnct.send_command_timing(
+                        f"interface pon {shelf}/{sl}/xp{p}")
+                    cnct.send_command_timing(
+                        f"interface pon {shelf}/{sl}/xp{p}")
                     cnct.send_command_timing("no shutdown")
                     cnct.send_command_timing("top")
                     print(f"{shelf}/{sl}/xp{p} is on")

@@ -17,15 +17,18 @@ def alarm_table(e9=argv[2]):
     cnct = calix_e9()
     tbl = input(f"{c_BLUE}Alarm name: {c_WHITE}")
     if tbl == "dying":
-        dying = cnct.send_command_timing("show alarm active | include ont-dying-gasp")
+        dying = cnct.send_command_timing(
+            "show alarm active | include ont-dying-gasp")
         cnct.disconnect()
         return dying
     elif tbl == "missing":
-        missing = cnct.send_command_timing("show alarm active | include missing")
+        missing = cnct.send_command_timing(
+            "show alarm active | include missing")
         cnct.disconnect()
         return missing
     elif tbl == "red":
-        red_temp = cnct.send_command_timing("show alarm active | include red-temp")
+        red_temp = cnct.send_command_timing(
+            "show alarm active | include red-temp")
         cnct.disconnect()
         return red_temp
     elif tbl == "all":
@@ -35,7 +38,8 @@ def alarm_table(e9=argv[2]):
         cnct.disconnect()
         return alrms
     elif tbl == "lop":
-        lop = cnct.send_command_timing("show alarm active | include loss-of-pon")
+        lop = cnct.send_command_timing(
+            "show alarm active | include loss-of-pon")
         cnct.disconnect()
         return lop
     else:
