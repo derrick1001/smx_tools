@@ -13,13 +13,13 @@ ont = range(2001, 2100)
 def get_discovered():
     cnct = calix_e9()
     sh_ont = cnct.send_command_timing(
-        "show interface pon 2/1/xp1 discovered-onts | notab | inc discovered | exclude DA3659"
-    ).split()[2::3]
+        "show interface pon 2/1/xp2 discovered-onts | notab | inc discovered | exclude DA3659"
+    ).split()[3::3]
     models = cnct.send_command_timing(
-        "show interface pon 2/1/xp1 discovered-onts | notab | inc model"
+        "show interface pon 2/1/xp2 discovered-onts | notab | inc model"
     ).split()[1::2]
     cnct.disconnect()
-    cxnk = [f'0{i}' if len(i) == 7 else f'00{i}' for i in sh_ont]
+    cxnk = [f"0{i}" if len(i) == 7 else f"00{i}" for i in sh_ont]
     return {sn: mod for sn, mod in zip(cxnk, models)}
 
 
