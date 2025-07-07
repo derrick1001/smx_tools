@@ -7,7 +7,7 @@ from calix.post_ont import mk_ont
 from crayon import c_CYAN, c_GREEN, c_MAGENTA, c_RED
 from requests import get, put
 
-ont = range(2001, 2100)
+ont = range(1001, 1999)
 
 
 def get_discovered():
