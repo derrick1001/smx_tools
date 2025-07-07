@@ -1,13 +1,18 @@
+from warnings import filterwarnings
+from sys import path
 from time import sleep
 
 from calix.connection import calix_e9
 from calix.del_ont import del_ont
 from calix.post_eth_serv import mk_eth_serv
 from calix.post_ont import mk_ont
-from crayon import c_CYAN, c_GREEN, c_MAGENTA, c_RED
+from calix.crayon import c_CYAN, c_GREEN, c_MAGENTA, c_RED
 from requests import get, put
 
-ont = range(1001, 1999)
+path.append('/home/test/smx_tools/')
+filterwarnings('ignore', message='Unverified HTTPS request')
+
+ont = range(1001, 2000)
 
 
 def get_discovered():
@@ -88,3 +93,5 @@ if __name__ == "__main__":
             print(f"\n{c_GREEN}ONT updated successfully!")
         elif service.status_code == 500:
             rcode_500(id, sn, mod[sn])
+        else:
+            print(service.json())
