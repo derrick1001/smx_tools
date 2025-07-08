@@ -74,9 +74,15 @@ def rcode_500(id: str, sn: str, mod: str):
 
 if __name__ == "__main__":
     cnct = calix_e9()
+    wt = f"{c_CYAN}Waiting for ONTs"
     while True:
-        print(f"{c_CYAN}Waiting for ONTs...", end="\r")
-        sleep(2)
+        print(wt + '.', end='\r')
+        sleep(1)
+        print(wt + '..', end='\r')
+        sleep(1)
+        print(wt + '...', end='\r')
+        sleep(1)
+        print(wt.strip('.'), end='   \r')
         count = cnct.send_command_timing("show interface pon 2/1/xp2 discovered-onts | notab | inc discovered-ont[^s] | exclude DA3659 | count")
         if "5" in count:
             print(f"{c_GREEN}ONTs discovered!!\n")
