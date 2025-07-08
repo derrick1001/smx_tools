@@ -75,11 +75,11 @@ def rcode_500(id: str, sn: str, mod: str):
 if __name__ == "__main__":
     cnct = calix_e9()
     while True:
-        print("Waiting for ONTs...\r")
+        print(f"{c_CYAN}Waiting for ONTs...", end="\r")
         sleep(2)
         count = cnct.send_command_timing("show interface pon 2/1/xp2 discovered-onts | notab | inc discovered-ont[^s] | exclude DA3659 | count")
         if "5" in count:
-            print("ONTs discovered!!\n")
+            print(f"{c_GREEN}ONTs discovered!!\n")
             sleep(2)
             mod = get_discovered()
             print(mod)
@@ -102,3 +102,4 @@ if __name__ == "__main__":
                     rcode_500(id, sn, mod[sn])
                 else:
                     print(service.json())
+            sleep(130)
