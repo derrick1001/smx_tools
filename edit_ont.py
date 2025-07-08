@@ -12,7 +12,7 @@ from requests import get, put
 path.append('/home/test/smx_tools/')
 filterwarnings('ignore', message='Unverified HTTPS request')
 
-ont = range(1001, 2000)
+ont = range(201, 300)
 
 
 def get_discovered():
@@ -23,7 +23,6 @@ def get_discovered():
     models = cnct.send_command_timing(
         "show interface pon 2/1/xp2 discovered-onts | notab | inc model"
     ).split()[1::2]
-    cnct.disconnect()
     cxnk = [f"0{i}" if len(i) == 7 else f"00{i}" for i in sh_ont]
     return {sn: mod for sn, mod in zip(cxnk, models)}
 
@@ -74,24 +73,32 @@ def rcode_500(id: str, sn: str, mod: str):
 
 
 if __name__ == "__main__":
-    mod = get_discovered()
-    print(mod)
-    for id, sn in zip(ont, mod):
-        payload = {
-            "serial-number": sn,
-            "ont-id": id,
-            "ont-profile-id": mod[sn],
-            "subscriber-id": id,
-        }
-        service = put(
-            f"https://10.20.7.10:18443/rest/v1/config/device/CVEC-E9-1/ont?action=update&ont-id={id}&serial-number=CXNK{sn}",
-            auth=("admin", "Thesearethetimes!"),
-            verify=False,
-            json=payload,
-        )
-        if service.status_code == 200:
-            print(f"\n{c_GREEN}ONT updated successfully!")
-        elif service.status_code == 500:
-            rcode_500(id, sn, mod[sn])
-        else:
-            print(service.json())
+    cnct = calix_e9()
+    while True:
+        print("Waiting for ONTs...\r")
+        sleep(2)
+        count = cnct.send_command_timing("show interface pon 2/1/xp2 discovered-onts | notab | inc discovered-ont[^s] | exclude DA3659 | count")
+        if "5" in count:
+            print("ONTs discovered!!\n")
+            sleep(2)
+            mod = get_discovered()
+            print(mod)
+            for id, sn in zip(ont, mod):
+                payload = {
+                    "serial-number": sn,
+                    "ont-id": id,
+                    "ont-profile-id": mod[sn],
+                    "subscriber-id": id,
+                }
+                service = put(
+                    f"https://10.20.7.10:18443/rest/v1/config/device/CVEC-E9-1/ont?action=update&ont-id={id}&serial-number=CXNK{sn}",
+                    auth=("admin", "Thesearethetimes!"),
+                    verify=False,
+                    json=payload,
+                )
+                if service.status_code == 200:
+                    print(f"\n{c_GREEN}ONT updated successfully!")
+                elif service.status_code == 500:
+                    rcode_500(id, sn, mod[sn])
+                else:
+                    print(service.json())
