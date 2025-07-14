@@ -9,8 +9,8 @@ from calix.post_ont import mk_ont
 from calix.crayon import c_CYAN, c_GREEN, c_MAGENTA, c_RED
 from requests import get, put
 
-path.append('/home/test/smx_tools/')
-filterwarnings('ignore', message='Unverified HTTPS request')
+path.append("/home/test/smx_tools/")
+filterwarnings("ignore", message="Unverified HTTPS request")
 
 ont = range(201, 300)
 
@@ -29,11 +29,15 @@ def get_discovered():
 
 def rcode_500(id: str, sn: str, mod: str):
     print(
-        f"\n{c_RED}Serial number {c_MAGENTA}CXNK{sn} {c_RED}already in use, force deleting and reassigning"
+        f"\n{c_RED}Serial number {c_MAGENTA}CXNK{sn} {
+            c_RED
+        }already in use, force deleting and reassigning"
     )
     sleep(2)
     get_id = get(
-        f"https://10.20.7.10:18443/rest/v1/config/device/CVEC-E9-1/ont?serial-number=CXNK{sn}",
+        f"https://10.20.7.10:18443/rest/v1/config/device/CVEC-E9-1/ont?serial-number=CXNK{
+            sn
+        }",
         auth=("admin", "Thesearethetimes!"),
         verify=False,
     )
@@ -76,14 +80,16 @@ if __name__ == "__main__":
     cnct = calix_e9()
     wt = f"{c_CYAN}Waiting for ONTs"
     while True:
-        print(wt + '.', end='\r')
+        print(wt + ".", end="\r")
         sleep(1)
-        print(wt + '..', end='\r')
+        print(wt + "..", end="\r")
         sleep(1)
-        print(wt + '...', end='\r')
+        print(wt + "...", end="\r")
         sleep(1)
-        print(wt.strip('.'), end='   \r')
-        count = cnct.send_command_timing("show interface pon 2/1/xp2 discovered-onts | notab | inc discovered-ont[^s] | exclude DA3659 | count")
+        print(wt.strip("."), end="   \r")
+        count = cnct.send_command_timing(
+            "show interface pon 2/1/xp2 discovered-onts | notab | inc discovered-ont[^s] | exclude DA3659 | count"
+        )
         if "5" in count:
             print(f"{c_GREEN}ONTs discovered!!\n")
             sleep(2)
@@ -97,7 +103,9 @@ if __name__ == "__main__":
                     "subscriber-id": id,
                 }
                 service = put(
-                    f"https://10.20.7.10:18443/rest/v1/config/device/CVEC-E9-1/ont?action=update&ont-id={id}&serial-number=CXNK{sn}",
+                    f"https://10.20.7.10:18443/rest/v1/config/device/CVEC-E9-1/ont?action=update&ont-id={
+                        id
+                    }&serial-number=CXNK{sn}",
                     auth=("admin", "Thesearethetimes!"),
                     verify=False,
                     json=payload,
