@@ -1,20 +1,24 @@
 #!/usr/local/bin/python3
 
 from sys import argv
-from netmiko import ConnectHandler, NetmikoTimeoutException, NetmikoAuthenticationException
+from netmiko import (
+    ConnectHandler,
+    NetmikoTimeoutException,
+    NetmikoAuthenticationException,
+)
 
 
 def default_or_not():
     device = {
         "device_type": "cisco_ios",
-        "host": "10.20.0.51",
+        "host": "192.168.1.1",
         "username": "sysadmin",
         "password": "sysadmin",
         "fast_cli": True,
     }
     device_configured = {
         "device_type": "cisco_ios",
-        "host": "10.20.0.51",
+        "host": "192.168.1.1",
         "username": "sysadmin",
         "password": "Thesearethetimes!",
         "fast_cli": True,
@@ -48,10 +52,8 @@ def turn_on_ports(cnct, start: int, stop: int):
                 else:
                     print("Card not in service, use show card to verify")
                 for p in port:
-                    cmd_list = [f"interface pon {shelf}/{sl}/xp{p}", "no shutdown", "top"]
-                    cmd_as_string = '\n'.join(cmd_list)
-                    cnct.send_command_timing(
-                        cmd_as_string)
+                    cmd_list = [f"interface pon {shelf}/{sl}/xp{p}\nno shutdown\ntop"]
+                    cnct.send_command_timing(cmd_list[0])
                     print(f"{shelf}/{sl}/xp{p} is on")
 
 
