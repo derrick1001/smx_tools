@@ -47,4 +47,4 @@ sub = post(
     json=payload,
 )
 if sub.status_code == 201:
-    print(f"\nSubscriber created successfully!")
+    print("\nSubscriber created successfully!")
