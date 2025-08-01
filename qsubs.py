@@ -3,9 +3,8 @@
 from sys import argv
 
 from calix.affected_decorator import affected_decorator
-from crayon import c_BLUE, c_CYAN, c_WHITE
 
-onts = input(f"{c_BLUE}ONT_IDS{c_WHITE}: ").split()
+onts = input("ONT_IDs:").split()
 
 
 @affected_decorator
@@ -17,6 +16,3 @@ if __name__ == "__main__":
     subs = main(e9=argv[2])
     for sub in subs:
         print(sub)
-    q = input(f"{c_CYAN}Press any key to exit...")
-    if q is None:
-        exit()
