@@ -15,7 +15,7 @@ from crayon import c_BLUE, c_WHITE
 @proc_alarms
 def alarm_table(e9=argv[2]):
     cnct = calix_e9()
-    tbl = input(f"{c_BLUE}Alarm name: {c_WHITE}")
+    tbl = input(f"{c_BLUE}Alarm name:{c_WHITE}")
     if tbl == "dying":
         dying = cnct.send_command_timing("show alarm active | include ont-dying-gasp")
         cnct.disconnect()
