@@ -65,3 +65,7 @@ if __name__ == "__main__":
             turn_on_ports(cnct, int(argv[1]), int(argv[2]))
     except ValueError:
         print("Wrong format, use command python3 e9_all_on.py <2-5> <2-5>")
+    else:
+        save_config = cnct.send_command_timing("copy running-config startup-config")
+    if "Copy completed." in save_config:
+        print("Configuration saved")
