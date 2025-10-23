@@ -1,22 +1,19 @@
 #!/usr/local/bin/python3.13
 
-from calix.connection import calix_e9
+from sys import argv
+from calix.e9 import CalixE9
 
-cnct = calix_e9()
+e9 = CalixE9(argv[1], argv[2])
 
-slots = range(1, 3)
-xports = range(1, 9)
-gports = range(1, 3)
+xports = e9.eth_range("x")
+gports = e9.eth_range("g")
 
-cnct.send_command_timing("configure")
-for slot in slots:
-    for port in xports:
-        cmd = [f"interface ethernet 1/{slot}/x{port}\nshutdown\nexit"]
-        cnct.send_command_timing(cmd[0])
-        print(f"1/{slot}/x{port} is shutdown")
-for slot in slots:
-    for port in gports:
-        cmd = [f"interface ethernet 1/{slot}/g{port}\nshutdown\nexit"]
-        cnct.send_command_timing(cmd[0])
-        print(f"1/{slot}/g{port} is shutdown")
-cnct.disconnect()
+e9.connection.send_command_timing("configure")
+for port in xports:
+    cmd = [f"interface ethernet {port}\nshutdown\nexit"]
+    e9.connection.send_command_timing(cmd[0])
+    print(f"{port} is shutdown")
+for port in gports:
+    cmd = [f"interface ethernet {port}\nshutdown\nexit"]
+    e9.connection.send_command_timing(cmd[0])
+    print(f"{port} is shutdown")
