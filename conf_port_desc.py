@@ -1,30 +1,45 @@
-from time import sleep
+from calix.e9 import CalixE9
 
-from netmiko import ConnectHandler
+e9 = CalixE9("10.20.15.51", "United-Clay-E9-1")
 
-f1 = "n1"
-f2 = "w2"
-f3 = "s3"
-f4 = "xw2"
-ports = range(1, 24, 2)
-fibers = (f for f in range(117, 142) if f % 12 != 0)
-# for p in ports:
-#    print(f"5/1/xp{p}_{f4},{next(fibers)}-{next(fibers)}")
+feeder = "xe4"
+ports = e9.pon_range("5", "1", "25-31", odd=True)
+fibers = e9.fiber_range(67, 75)
 
-device = {
-    "device_type": "cisco_ios",
-    "host": "10.20.5.51",
-    "username": "sysadmin",
-    "password": "Thesearethetimes!",
-    "fast_cli": False,
-}
-cnct = ConnectHandler(**device)
 
-for p in ports:
-    cnct.send_command_timing("configure")
-    cnct.send_command_timing(f"interface pon 5/2/xp{p}")
-    cnct.send_command_timing(f"description {f4},{next(fibers)}-{next(fibers)}")
-    output = cnct.send_command_timing(f"top show full-configuration int pon 5/2/xp{p}")
-    print(output)
-    sleep(1)
-    print("")
+def dry_run():
+    try:
+        for p in ports:
+            print(f"{p} -> {feeder},{next(fibers)}-{next(fibers)}")
+    except StopIteration:
+        print("No more fibers")
+
+
+def descriptions():
+    desc = [f"{p} -> {e9.description(p, 'pon')}" for p in ports]
+    return desc
+
+
+def main():
+    e9.connection.send_command_timing("configure")
+    for p in ports:
+        try:
+            cmds = [
+                f"interface pon {p}\ndescription {feeder},{next(fibers)}-{next(fibers)}"
+            ]
+            e9.connection.send_command_timing(cmds[0])
+        except StopIteration:
+            print("No more fibers")
+
+
+if __name__ == "__main__":
+    choice = input("Dry run?: ")
+    if choice == "y":
+        dry_run()
+    elif choice == "n":
+        main()
+        desc = descriptions()
+        for description in desc:
+            print(description)
+    else:
+        print("Please use 'y' or 'n'")
