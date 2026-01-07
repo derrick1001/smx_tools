@@ -30,15 +30,10 @@ def get_discovered():
 
 def rcode_500(id: str, sn: str, mod: str):
     print(
-        f"\n{c_RED}Serial number {c_MAGENTA}CXNK{sn} {
-            c_RED
-        }already in use, force deleting and reassigning"
-    )
+        f"\n{c_RED}Serial number {c_MAGENTA}CXNK{sn} {c_RED}already in use, force deleting and reassigning")
     sleep(2)
     get_id = get(
-        f"https://10.20.7.10:18443/rest/v1/config/device/CVEC-E9-1/ont?serial-number=CXNK{
-            sn
-        }",
+        f"https://10.20.7.10:18443/rest/v1/config/device/CVEC-E9-1/ont?serial-number=CXNK{sn}",
         auth=("admin", "Thesearethetimes!"),
         verify=False,
     )
@@ -104,9 +99,7 @@ if __name__ == "__main__":
                     "subscriber-id": id,
                 }
                 service = put(
-                    f"https://10.20.7.10:18443/rest/v1/config/device/CVEC-E9-1/ont?action=update&ont-id={
-                        id
-                    }&serial-number=CXNK{sn}",
+                    f"https://10.20.7.10:18443/rest/v1/config/device/CVEC-E9-1/ont?action=update&ont-id={id}&serial-number=CXNK{sn}",
                     auth=("admin", "Thesearethetimes!"),
                     verify=False,
                     json=payload,
