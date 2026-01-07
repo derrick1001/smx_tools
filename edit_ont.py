@@ -110,4 +110,4 @@ if __name__ == "__main__":
                     rcode_500(id, sn, mod[sn])
                 else:
                     print(service.json())
-            sleep(300)
+            sleep(180)
