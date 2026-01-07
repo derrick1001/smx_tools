@@ -3,13 +3,13 @@ from sys import path
 from time import sleep
 
 from calix.connection import calix_e9
-from calix.del_ont import del_ont
+from calix.rmont import rmont
 from calix.post_eth_serv import mk_eth_serv
 from calix.post_ont import mk_ont
 from calix.crayon import c_CYAN, c_GREEN, c_MAGENTA, c_RED
 from requests import get, put
 
-path.append("/home/test/smx_tools/")
+#path.append("/home/test/smx_tools/")
 filterwarnings("ignore", message="Unverified HTTPS request")
 
 ont = range(201, 217)
