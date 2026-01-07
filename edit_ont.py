@@ -9,7 +9,7 @@ from calix.post_ont import mk_ont
 from calix.crayon import c_CYAN, c_GREEN, c_MAGENTA, c_RED
 from requests import get, put
 
-#path.append("/home/test/smx_tools/")
+path.append("/home/test/smx_tools/")
 filterwarnings("ignore", message="Unverified HTTPS request")
 
 ont = range(201, 217)
