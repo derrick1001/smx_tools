@@ -12,13 +12,14 @@ from requests import get, put
 path.append("/home/test/smx_tools/")
 filterwarnings("ignore", message="Unverified HTTPS request")
 
-ont = range(201, 300)
+ont = range(201, 217)
 
 
 def get_discovered():
     cnct = calix_e9()
+    # If discovering both ports is necessary, do it here and join the lists together with sh_ont.extend()
     sh_ont = cnct.send_command_timing(
-        "show interface pon 2/1/xp2 discovered-onts | notab | inc discovered | exclude DA3659"
+        "show interface pon 2/1/xp2 discovered-onts | notab | inc discovered"
     ).split()[3::3]
     models = cnct.send_command_timing(
         "show interface pon 2/1/xp2 discovered-onts | notab | inc model"
@@ -88,7 +89,7 @@ if __name__ == "__main__":
         sleep(1)
         print(wt.strip("."), end="   \r")
         count = cnct.send_command_timing(
-            "show interface pon 2/1/xp2 discovered-onts | notab | inc discovered-ont[^s] | exclude DA3659 | count"
+            "show interface pon 2/1/xp2 discovered-onts | notab | inc discovered-ont[^s] | count"
         )
         if "5" in count:
             print(f"{c_GREEN}ONTs discovered!!\n")
