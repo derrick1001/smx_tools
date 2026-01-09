@@ -18,17 +18,14 @@ ont = range(201, 217)
 def get_discovered():
     cnct = calix_e9()
     # If discovering both ports is necessary, do it here and join the lists together with sh_ont.extend()
-    sh_ont = cnct.send_command_timing(
-        "show interface pon 2/1/xp2 discovered-onts | notab | inc discovered").split()[3::3]
-    models = cnct.send_command_timing(
-        "show interface pon 2/1/xp2 discovered-onts | notab | inc model").split()[1::2]
+    sh_ont = cnct.send_command_timing("show interface pon 2/1/xp2 discovered-onts | notab | inc discovered").split()[3::3]
+    models = cnct.send_command_timing("show interface pon 2/1/xp2 discovered-onts | notab | inc model").split()[1::2]
     cxnk = [f"0{i}" if len(i) == 7 else f"00{i}" for i in sh_ont]
     return {sn: mod for sn, mod in zip(cxnk, models)}
 
 
 def rcode_500(id: str, sn: str, mod: str):
-    print(
-        f"\n{c_RED}Serial number {c_MAGENTA}CXNK{sn} {c_RED}already in use, force deleting and reassigning")
+    print(f"\n{c_RED}Serial number {c_MAGENTA}CXNK{sn} {c_RED}already in use, force deleting and reassigning")
     sleep(2)
     get_id = get(f"https://10.20.7.10:18443/rest/v1/config/device/CVEC-E9-1/ont?serial-number=CXNK{sn}",
                  auth=("admin", "Thesearethetimes!"),
@@ -79,9 +76,7 @@ if __name__ == "__main__":
         print(wt + "...", end="\r")
         sleep(1)
         print(wt.strip("."), end="   \r")
-        count = cnct.send_command_timing(
-            "show interface pon 2/1/xp2 discovered-onts | notab | inc discovered-ont[^s] | count"
-        )
+        count = cnct.send_command_timing("show interface pon 2/1/xp2 discovered-onts | notab | inc discovered-ont[^s] | count")
         if "1" in count:
             print(f"{c_GREEN}ONTs discovered!!\n")
             sleep(2)
@@ -95,8 +90,7 @@ if __name__ == "__main__":
                     "subscriber-id": id,
                 }
                 service = put(
-                    f"https://10.20.7.10:18443/rest/v1/config/device/CVEC-E9-1/ont?action=update&ont-id={
-                        id}&serial-number=CXNK{sn}",
+                    f"https://10.20.7.10:18443/rest/v1/config/device/CVEC-E9-1/ont?action=update&ont-id={id}&serial-number=CXNK{sn}",
                     auth=("admin", "Thesearethetimes!"),
                     verify=False,
                     json=payload,
