@@ -97,7 +97,7 @@ if __name__ == "__main__":
                     json=payload,
                 )
                 if service.status_code == 200:
-                    print(f"\n{c_GREEN}ONT updated successfully!")
+                    print(f"\n{c_GREEN}ONT {c_MAGENTA}{sn} successfully updated with account {c_CYAN}{ont}")
                 elif service.status_code == 500:
                     rcode_500(id, sn, mod[sn])
                 else:
