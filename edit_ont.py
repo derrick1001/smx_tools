@@ -7,13 +7,14 @@ from calix.ont_detail import ont
 from calix.rmont import rmont
 from calix.post_eth_serv import mk_eth_serv
 from calix.post_ont import mk_ont
-from calix.crayon import c_CYAN, c_GREEN, c_MAGENTA, c_RED
+from calix.crayon import c_CYAN, c_GREEN, c_MAGENTA, c_RED, c_WHITE
 from requests import get, put
 
 path.append("/home/test/smx_tools/")
 filterwarnings("ignore", message="Unverified HTTPS request")
 
-LOW_THRESHOLD = range(-23, -19)
+LOW_UP_THRESHOLD = range(-30, -21)
+LOW_DOWN_THRESHOLD = range(-25, -17)
 cvec = CalixE9("10.20.0.51", "CVEC-E9-1")
 ont_range = range(201, 217)
 
@@ -28,8 +29,8 @@ def get_discovered():
 
 def get_light(id: str) -> list:
     response = ont(cvec.name, id)
-    down = response.get('opt-signal-level')
-    up = response.get('ne-opt-signal-level')
+    down = int(float(response.get('opt-signal-level')))
+    up = int(float(response.get('ne-opt-signal-level')))
     dber = response.get('ds-sdber-rate')
     uber = response.get('us-sdber-rate')
     return (down, up, dber, uber)
@@ -86,14 +87,12 @@ if __name__ == "__main__":
         print(wt + "...", end="\r")
         sleep(1)
         print(wt.strip("."), end="   \r")
-        count = cvec.connection.send_command_timing(
-            "show interface pon 2/1/xp2 discovered-onts | notab | inc discovered-ont[^s] | count")
+        count = cvec.connection.send_command_timing("show interface pon 2/1/xp2 discovered-onts | notab | inc discovered-ont[^s] | count")
         if "4" in count:
             print(f"{c_GREEN}ONTs discovered!!\n")
             sleep(2)
             mod = get_discovered()
-            print(mod)
-            for id, sn in zip(ont, mod):
+            for id, sn in zip(ont_range, mod):
                 payload = {
                     "serial-number": sn,
                     "ont-id": id,
@@ -108,7 +107,17 @@ if __name__ == "__main__":
                 )
                 if service.status_code == 200:
                     dl, ul, dber, uber = get_light(id)
-                    print(f"\n{c_GREEN}ONT {c_MAGENTA}{sn} successfully updated with account {c_CYAN}{ont}")
+                    print(f"\nONT {c_MAGENTA}{sn} {
+                          c_WHITE}successfully updated with account {c_CYAN}{id}")
+                    if dl in LOW_DOWN_THRESHOLD:
+                        dl = f"{c_RED}{dl}"
+                    if ul in LOW_UP_THRESHOLD:
+                        ul = f"{c_RED}{ul}"
+                    if dber == '1.00E-14':
+                        dber = f"{c_RED}{dber}"
+                    if uber == '1.00E-14':
+                        uber = f"{c_RED}{dber}"
+                    print(f"{c_CYAN}DL_{id}:\t{c_GREEN}{dl}\n\t{c_GREEN}{dber}\n{c_CYAN}UL_{id}:\t{c_GREEN}{ul}\n\t{c_GREEN}{uber}\n")
                 elif service.status_code == 500:
                     rcode_500(id, sn, mod[sn])
                 else:
