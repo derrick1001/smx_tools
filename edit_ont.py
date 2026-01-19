@@ -46,7 +46,6 @@ def rcode_500(id: str, sn: str, mod: str):
     print(f"{c_CYAN}Deleting old ONT...")
     sleep(2)
     rmont(nid, cvec.name)
-    rmont(id, cvec.name)
     payload = {
         "ont-id": id,
         "ont-type": "Residential",
