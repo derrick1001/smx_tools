@@ -13,8 +13,8 @@ from requests import get, put
 path.append("/home/test/smx_tools/")
 filterwarnings("ignore", message="Unverified HTTPS request")
 
-LOW_UP_THRESHOLD = range(-30, -21)
-LOW_DOWN_THRESHOLD = range(-25, -17)
+LOW_UP_THRESHOLD = range(-30, -22)
+LOW_DOWN_THRESHOLD = range(-25, -20)
 cvec = CalixE9("10.20.0.51", "CVEC-E9-1")
 ont_range = range(201, 217)
 
@@ -88,7 +88,7 @@ if __name__ == "__main__":
         sleep(1)
         print(wt.strip("."), end="   \r")
         count = cvec.connection.send_command_timing("show interface pon 2/1/xp2 discovered-onts | notab | inc discovered-ont[^s] | count")
-        if "4" in count:
+        if "5" in count:
             print(f"{c_GREEN}ONTs discovered!!\n")
             sleep(2)
             mod = get_discovered()
@@ -112,9 +112,9 @@ if __name__ == "__main__":
                         dl = f"{c_RED}{dl}"
                     if ul in LOW_UP_THRESHOLD:
                         ul = f"{c_RED}{ul}"
-                    if dber == '1.00E-14':
+                    if dber != '1.00E-14':
                         dber = f"{c_RED}{dber}"
-                    if uber == '1.00E-14':
+                    if uber != '1.00E-14':
                         uber = f"{c_RED}{dber}"
                     print(f"{c_CYAN}DL_{id}:\t{c_GREEN}{dl}\n\t{c_GREEN}{dber}\n{c_CYAN}UL_{id}:\t{c_GREEN}{ul}\n\t{c_GREEN}{uber}\n")
                 elif service.status_code == 500:
