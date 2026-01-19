@@ -107,8 +107,7 @@ if __name__ == "__main__":
                 )
                 if service.status_code == 200:
                     dl, ul, dber, uber = get_light(id)
-                    print(f"\nONT {c_MAGENTA}{sn} {
-                          c_WHITE}successfully updated with account {c_CYAN}{id}")
+                    print(f"\nONT {c_MAGENTA}{sn} {c_WHITE}successfully updated with account {c_CYAN}{id}")
                     if dl in LOW_DOWN_THRESHOLD:
                         dl = f"{c_RED}{dl}"
                     if ul in LOW_UP_THRESHOLD:
