@@ -29,11 +29,19 @@ def get_discovered():
 
 def get_light(id: str) -> list:
     response = ont(cvec.name, id)
-    down = int(float(response.get('opt-signal-level')))
-    up = int(float(response.get('ne-opt-signal-level')))
+    dl = int(float(response.get('opt-signal-level')))
+    ul = int(float(response.get('ne-opt-signal-level')))
     dber = response.get('ds-sdber-rate')
     uber = response.get('us-sdber-rate')
-    return (down, up, dber, uber)
+    if dl in LOW_DOWN_THRESHOLD:
+        dl = f"{c_RED}{dl}"
+    if ul in LOW_UP_THRESHOLD:
+        ul = f"{c_RED}{ul}"
+    if dber != '1.00E-14':
+        dber = f"{c_RED}{dber}"
+    if uber != '1.00E-14':
+        uber = f"{c_RED}{dber}"
+    return f"{c_CYAN}DL_{id}:\t{c_GREEN}{dl}\n\t{c_GREEN}{dber}\n{c_CYAN}UL_{id}:\t{c_GREEN}{ul}\n\t{c_GREEN}{uber}\n"
 
 
 def rcode_500(id: str, sn: str, mod: str):
@@ -105,19 +113,11 @@ if __name__ == "__main__":
                     json=payload,
                 )
                 if service.status_code == 200:
-                    dl, ul, dber, uber = get_light(id)
                     print(f"\nONT {c_MAGENTA}{sn} {c_WHITE}successfully updated with account {c_CYAN}{id}")
-                    if dl in LOW_DOWN_THRESHOLD:
-                        dl = f"{c_RED}{dl}"
-                    if ul in LOW_UP_THRESHOLD:
-                        ul = f"{c_RED}{ul}"
-                    if dber != '1.00E-14':
-                        dber = f"{c_RED}{dber}"
-                    if uber != '1.00E-14':
-                        uber = f"{c_RED}{dber}"
-                    print(f"{c_CYAN}DL_{id}:\t{c_GREEN}{dl}\n\t{c_GREEN}{dber}\n{c_CYAN}UL_{id}:\t{c_GREEN}{ul}\n\t{c_GREEN}{uber}\n")
+                    levels = get_light(id)
                 elif service.status_code == 500:
                     rcode_500(id, sn, mod[sn])
+                    levels = get_light(id)
                 else:
                     print(service.json())
-            sleep(180)
+            sleep(140)
