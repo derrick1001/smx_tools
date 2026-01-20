@@ -27,7 +27,7 @@ def get_discovered():
     return {sn: mod for sn, mod in zip(cxnk, models)}
 
 
-def get_light(id: str) -> list:
+def get_light(id: str) -> str:
     response = ont(cvec.name, id)
     dl = int(float(response.get('opt-signal-level')))
     ul = int(float(response.get('ne-opt-signal-level')))
@@ -115,9 +115,11 @@ if __name__ == "__main__":
                 if service.status_code == 200:
                     print(f"\nONT {c_MAGENTA}{sn} {c_WHITE}successfully updated with account {c_CYAN}{id}")
                     levels = get_light(id)
+                    print(levels)
                 elif service.status_code == 500:
                     rcode_500(id, sn, mod[sn])
                     levels = get_light(id)
+                    print(levels)
                 else:
                     print(service.json())
             sleep(140)
