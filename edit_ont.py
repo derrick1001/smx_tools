@@ -51,6 +51,8 @@ def rcode_500(id: str, sn: str, mod: str):
                  auth=("admin", "Thesearethetimes!"),
                  verify=False)
     nid = get_id.json().get("ont-id")
+    if int(nid) in range(201, 206):
+        return f"{c_MAGENTA}{sn}{c_WHITE} is provisioned on test ONT {c_CYAN}{id}...{c_WHITE} exiting"
     print(f"{c_CYAN}Deleting old ONT...")
     sleep(2)
     rmont(nid, cvec.name)
@@ -117,9 +119,12 @@ if __name__ == "__main__":
                     levels = get_light(id)
                     print(levels)
                 elif service.status_code == 500:
-                    rcode_500(id, sn, mod[sn])
+                    i = rcode_500(id, sn, mod[sn])
+                    if i:
+                        print(i)
+                        continue
                     levels = get_light(id)
                     print(levels)
                 else:
                     print(service.json())
-            sleep(140)
+            sleep(180)
