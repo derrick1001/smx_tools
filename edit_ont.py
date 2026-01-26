@@ -102,35 +102,38 @@ def rcode_500(id: str, sn: str, mod: str):
 
 
 if __name__ == "__main__":
-    count = get_count()
-    if count:
-        print(f"{c_GREEN}ONTs discovered!!\n")
-        sleep(2)
-        mod = get_discovered()
-        for id, sn in zip(ont_range, mod):
-            payload = {
-                "serial-number": sn,
-                "ont-id": id,
-                "ont-profile-id": mod[sn],
-                "subscriber-id": id,
-            }
-            service = put(
-                f"https://10.20.7.10:18443/rest/v1/config/device/{cvec.name}/ont?action=update&ont-id={id}&serial-number=CXNK{sn}",
-                auth=("admin", "Thesearethetimes!"),
-                verify=False,
-                json=payload,
-            )
-            if service.status_code == 200:
-                print(f"\nONT {c_MAGENTA}{sn} {c_WHITE}successfully updated with account {c_CYAN}{id}")
-                levels = get_light(id)
-                print(levels)
-            elif service.status_code == 500:
-                i = rcode_500(id, sn, mod[sn])
-                if i:
-                    print(i)
-                    continue
-                levels = get_light(id)
-                print(levels)
-            else:
-                print(service.json())
-        sleep(180)
+    while True:
+        count = get_count()
+        if count == 5:
+            print(f"{c_GREEN}ONTs discovered!!\n")
+            sleep(2)
+            mod = get_discovered()
+            for id, sn in zip(ont_range, mod):
+                payload = {
+                    "serial-number": sn,
+                    "ont-id": id,
+                    "ont-profile-id": mod[sn],
+                    "subscriber-id": id,
+                }
+                service = put(
+                    f"https://10.20.7.10:18443/rest/v1/config/device/{cvec.name}/ont?action=update&ont-id={id}&serial-number=CXNK{sn}",
+                    auth=("admin", "Thesearethetimes!"),
+                    verify=False,
+                    json=payload,
+                )
+                if service.status_code == 200:
+                    print(f"\nONT {c_MAGENTA}{sn} {c_WHITE}successfully updated with account {c_CYAN}{id}")
+                    levels = get_light(id)
+                    print(levels)
+                elif service.status_code == 500:
+                    i = rcode_500(id, sn, mod[sn])
+                    if i:
+                        print(i)
+                        continue
+                    levels = get_light(id)
+                    print(levels)
+                else:
+                    print(service.json())
+            sleep(180)
+        else:
+            continue
