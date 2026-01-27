@@ -60,45 +60,49 @@ def get_light(id: str) -> str:
 
 
 def rcode_500(id: str, sn: str, mod: str):
+    from calix.axos_e9 import e9
+
     print(f"\n{c_RED}Serial number {c_MAGENTA}CXNK{sn} {c_RED}already in use, force deleting and reassigning")
     sleep(2)
-    get_id = get(f"https://10.20.7.10:18443/rest/v1/config/device/{cvec.name}/ont?serial-number=CXNK{sn}",
-                 auth=("admin", "Thesearethetimes!"),
-                 verify=False)
-    nid = get_id.json().get("ont-id")
-    if int(nid) in range(201, 206):
-        return f"{c_MAGENTA}{sn}{c_WHITE} is provisioned on test ONT {c_CYAN}{id}...{c_WHITE} exiting"
-    print(f"{c_CYAN}Deleting old ONT...")
-    sleep(2)
-    rmont(nid, cvec.name)
-    payload = {
-        "ont-id": id,
-        "ont-type": "Residential",
-        "isGlobalOnt": False,
-        "serial-number": f"CXNK{sn}",
-        "ont-profile-id": mod,
-        "subscriber-id": id,
-    }
-    print(f"{c_CYAN}Making new ONT...")
-    sleep(2)
-    mk_ont(cvec.name, **payload)
-    print(f"{c_CYAN}Applying services...")
-    sleep(2)
-    payload = {
-        "changeGlobalVlan": True,
-        "serviceType": "DATA_SERVICE",
-        "device-name": cvec.name,
-        "ont-port-id": "x1",
-        "admin-state": "enabled",
-        "admin-status": "active",
-        "ont-id": id,
-        "subscriber-id": id,
-        "policy-map": "Elite",
-        "service-name": "Data",
-        "vlan": id,
-    }
-    mk_eth_serv(**payload)
-    print(f"{c_GREEN}ONT updated successfully!")
+    for hostname in e9.keys():
+        get_id = get(f"https://10.20.7.10:18443/rest/v1/config/device/{hostname}/ont?serial-number=CXNK{sn}",
+                     auth=("admin", "Thesearethetimes!"),
+                     verify=False)
+        if get_id.status_code == 200:
+            nid = get_id.json()[0].get("ont-id")
+            print(f"{c_CYAN}Deleting old ONT...")
+            sleep(2)
+            rmont(nid, hostname)
+            payload = {
+                "ont-id": id,
+                "ont-type": "Residential",
+                "isGlobalOnt": False,
+                "serial-number": f"CXNK{sn}",
+                "ont-profile-id": mod,
+                "subscriber-id": id,
+            }
+            print(f"{c_CYAN}Making new ONT...")
+            sleep(2)
+            mk_ont(cvec.name, **payload)
+            print(f"{c_CYAN}Applying services...")
+            sleep(2)
+            payload = {
+                "changeGlobalVlan": True,
+                "serviceType": "DATA_SERVICE",
+                "device-name": cvec.name,
+                "ont-port-id": "x1",
+                "admin-state": "enabled",
+                "admin-status": "active",
+                "ont-id": id,
+                "subscriber-id": id,
+                "policy-map": "Elite",
+                "service-name": "Data",
+                "vlan": id,
+            }
+            mk_eth_serv(**payload)
+            print(f"{c_GREEN}ONT updated successfully!")
+        else:
+            continue
 
 
 if __name__ == "__main__":
