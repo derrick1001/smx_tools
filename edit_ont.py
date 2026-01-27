@@ -45,7 +45,7 @@ def get_discovered():
 def get_light(id: str) -> str:
     response = ont(cvec.name, id)
     print(id)
-    print(response.json())
+    print(response)
     dl = int(float(response.get('opt-signal-level')))
     ul = int(float(response.get('ne-opt-signal-level')))
     dber = response.get('ds-sdber-rate')
