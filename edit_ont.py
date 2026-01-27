@@ -46,8 +46,12 @@ def get_light(id: str) -> str:
     response = ont(cvec.name, id)
     print(id)
     print(response)
-    dl = int(float(response.get('opt-signal-level')))
-    ul = int(float(response.get('ne-opt-signal-level')))
+    try:
+        dl = int(float(response.get('opt-signal-level')))
+        ul = int(float(response.get('ne-opt-signal-level')))
+    except TypeError:
+        dl = None
+        ul = None
     dber = response.get('ds-sdber-rate')
     uber = response.get('us-sdber-rate')
     if dl in LOW_DOWN_THRESHOLD:
