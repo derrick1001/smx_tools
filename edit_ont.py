@@ -72,6 +72,8 @@ def rcode_500(id: str, sn: str, mod: str):
                      auth=("admin", "Thesearethetimes!"),
                      verify=False)
         if get_id.status_code == 200:
+            print(f"{c_MAGENTA}{sn}{c_WHITE} found on {c_GREEN}{hostname}")
+            sleep(1)
             nid = get_id.json()[0].get("ont-id")
             print(f"{c_CYAN}Deleting old ONT...")
             sleep(2)
@@ -105,6 +107,8 @@ def rcode_500(id: str, sn: str, mod: str):
             mk_eth_serv(**payload)
             print(f"{c_GREEN}ONT updated successfully!")
         else:
+            print(f"{sn} not found on {hostname}, searching")
+            sleep(1)
             continue
 
 
