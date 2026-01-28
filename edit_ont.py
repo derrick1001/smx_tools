@@ -71,6 +71,8 @@ def rcode_500(id: str, sn: str, mod: str):
         get_id = get(f"https://10.20.7.10:18443/rest/v1/config/device/{hostname}/ont?serial-number=CXNK{sn}",
                      auth=("admin", "Thesearethetimes!"),
                      verify=False)
+        print(get_id.status_code)
+        print(type(get_id.status_code))
         if get_id.status_code == 200:
             print(f"{c_MAGENTA}{sn}{c_WHITE} found on {c_GREEN}{hostname}")
             sleep(1)
@@ -107,7 +109,7 @@ def rcode_500(id: str, sn: str, mod: str):
             mk_eth_serv(**payload)
             print(f"{c_GREEN}ONT updated successfully!")
         else:
-            print(f"{sn} not found on {hostname}, searching")
+            print(f"{c_MAGENTA}{sn} {c_WHITE}not found on {c_CYAN}{hostname}, searching...")
             sleep(1)
             continue
 
