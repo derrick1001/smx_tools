@@ -139,14 +139,12 @@ if __name__ == "__main__":
                     levels = get_light(id)
                     print(levels)
                 elif service.status_code == 500:
-                    i = rcode_500(id, sn, mod[sn])
-                    if i:
-                        print(i)
-                        continue
+                    rcode_500(id, sn, mod[sn])
                     levels = get_light(id)
                     print(levels)
                 else:
                     print(service.json())
+                    continue
             sleep(180)
         else:
             continue
