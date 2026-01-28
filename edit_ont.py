@@ -4,6 +4,7 @@ from time import sleep
 
 from calix.e9 import CalixE9
 from calix.ont_detail import ont
+from calix.axos_e9 import e9
 from calix.rmont import rmont
 from calix.post_eth_serv import mk_eth_serv
 from calix.post_ont import mk_ont
@@ -64,8 +65,6 @@ def get_light(id: str) -> str:
 
 
 def rcode_500(id: str, sn: str, mod: str):
-    from calix.axos_e9 import e9
-
     print(f"\n{c_RED}Serial number {c_MAGENTA}CXNK{sn} {c_RED}already in use, force deleting and reassigning")
     sleep(2)
     for hostname in e9.keys():
