@@ -143,6 +143,7 @@ if __name__ == "__main__":
                     levels = get_light(id)
                     print(levels)
                 else:
+                    print(service.status_code)
                     print(service.json())
                     continue
             sleep(180)
