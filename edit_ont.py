@@ -134,10 +134,12 @@ if __name__ == "__main__":
                 )
                 if service.status_code == 200:
                     print(f"\nONT {c_MAGENTA}{sn} {c_WHITE}successfully updated with account {c_CYAN}{id}")
+                    sleep(2)
                     levels = get_light(id)
                     print(levels)
                 elif service.status_code == 500:
                     rcode_500(id, sn, mod[sn])
+                    sleep(2)
                     levels = get_light(id)
                     print(levels)
                 else:
