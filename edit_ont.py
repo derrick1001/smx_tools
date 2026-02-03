@@ -65,7 +65,7 @@ def get_light(id: str) -> str:
 
 
 def rcode_500(id: str, sn: str, mod: str):
-    print(f"\n{c_RED}Serial number {c_MAGENTA}CXNK{sn} {c_RED}already in use, force deleting and reassigning")
+    print(f"\n{c_RED}Serial number {c_MAGENTA}CXNK{sn} {c_RED}already in use, deleting and reassigning...")
     sleep(2)
     for hostname in e9.keys():
         get_id = get(f"https://10.20.7.10:18443/rest/v1/config/device/{hostname}/ont?serial-number=CXNK{sn}",
@@ -73,11 +73,13 @@ def rcode_500(id: str, sn: str, mod: str):
                      verify=False)
         if get_id.status_code == 200:
             print(f"{c_MAGENTA}{sn}{c_WHITE} found on {c_GREEN}{hostname}")
-            sleep(1)
             nid = get_id.json()[0].get("ont-id")
-            print(f"{c_CYAN}Deleting old ONT...")
             sleep(2)
+            print(f"{c_CYAN}Deleting old ONT...")
             rmont(nid, hostname)
+            sleep(1)
+            rmont(id, cvec.name)
+            sleep(1)
             payload = {
                 "ont-id": id,
                 "ont-type": "Residential",
@@ -87,10 +89,9 @@ def rcode_500(id: str, sn: str, mod: str):
                 "subscriber-id": id,
             }
             print(f"{c_CYAN}Making new ONT...")
-            sleep(2)
             mk_ont(cvec.name, **payload)
-            print(f"{c_CYAN}Applying services...")
             sleep(2)
+            print(f"{c_CYAN}Applying services...")
             payload = {
                 "changeGlobalVlan": True,
                 "serviceType": "DATA_SERVICE",
@@ -105,15 +106,22 @@ def rcode_500(id: str, sn: str, mod: str):
                 "vlan": id,
             }
             mk_eth_serv(**payload)
-            print(f"{c_GREEN}ONT updated successfully!")
+            sleep(2)
+            validate = get(f"https://10.20.7.10:18443/rest/v1/config/device/{cvec.name}/ont?serial-number=CXNK{sn}",
+                           auth=("admin", "Thesearethetimes"),
+                           verify=False)
+            if validate.status_code == 200:
+                print(f"\nONT {c_MAGENTA}{sn} {c_WHITE}successfully updated with account {c_CYAN}{id}")
+                return 0
+        elif hostname == 'CVEC-E9-1':
+            print(f"{c_RED}Failure, {c_WHITE}could not find {c_MAGENTA}{sn}")
+            sleep(1)
+            print(get_id.json())
+            return 1
         elif get_id.status_code == 404:
             print(f"{c_MAGENTA}{sn} {c_WHITE}not found on {c_CYAN}{hostname}, searching...")
             sleep(1)
             continue
-        else:
-            print(f"{c_RED}, {c_WHITE}could not find {c_MAGENTA}{sn}")
-            sleep(1)
-            print(get_id.json())
 
 
 if __name__ == "__main__":
@@ -129,14 +137,6 @@ if __name__ == "__main__":
                     "ont-id": id,
                     "ont-profile-id": mod[sn],
                     "subscriber-id": id,
-                    "twdm-channel": {
-                        "rmon-session": [
-                          {
-                            "bin-duration": 1,
-                            "bin-count": 100
-                          }
-                        ]
-                      }
                 }
                 service = put(
                     f"https://10.20.7.10:18443/rest/v1/config/device/{cvec.name}/ont?action=update&ont-id={id}&serial-number=CXNK{sn}",
