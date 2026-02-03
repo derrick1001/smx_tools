@@ -85,14 +85,6 @@ def rcode_500(id: str, sn: str, mod: str):
                 "serial-number": f"CXNK{sn}",
                 "ont-profile-id": mod,
                 "subscriber-id": id,
-                "twdm-channel": {
-                    "rmon-session": [
-                      {
-                        "bin-duration": "one-minute",
-                        "bin-count": 100
-                      }
-                    ]
-                  }
             }
             print(f"{c_CYAN}Making new ONT...")
             sleep(2)
@@ -137,6 +129,14 @@ if __name__ == "__main__":
                     "ont-id": id,
                     "ont-profile-id": mod[sn],
                     "subscriber-id": id,
+                    "twdm-channel": {
+                        "rmon-session": [
+                          {
+                            "bin-duration": "one-minute",
+                            "bin-count": 100
+                          }
+                        ]
+                      }
                 }
                 service = put(
                     f"https://10.20.7.10:18443/rest/v1/config/device/{cvec.name}/ont?action=update&ont-id={id}&serial-number=CXNK{sn}",
@@ -150,7 +150,6 @@ if __name__ == "__main__":
                     levels = get_light(id)
                     print(levels)
                 elif service.status_code == 500:
-                    print(service.status_code)
                     rcode_500(id, sn, mod[sn])
                     sleep(2)
                     levels = get_light(id)
