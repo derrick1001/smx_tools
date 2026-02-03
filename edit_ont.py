@@ -71,7 +71,7 @@ def rcode_500(id: str, sn: str, mod: str):
     sleep(2)
     for hostname in e9.keys():
         get_id = get(f"https://10.20.7.10:18443/rest/v1/config/device/{hostname}/ont?serial-number=CXNK{sn}",
-                     auth=("admin", "Thesearethetimes!"),
+                     auth=(username, password),
                      verify=False)
         if get_id.status_code == 200:
             print(f"{c_MAGENTA}{sn}{c_WHITE} found on {c_GREEN}{hostname}")
@@ -110,7 +110,7 @@ def rcode_500(id: str, sn: str, mod: str):
             mk_eth_serv(**payload)
             sleep(2)
             validate = get(f"https://10.20.7.10:18443/rest/v1/config/device/{cvec.name}/ont?serial-number=CXNK{sn}",
-                           auth=("admin", "Thesearethetimes"),
+                           auth=(username, password),
                            verify=False)
             if validate.status_code == 200:
                 print(f"\nONT {c_MAGENTA}{sn} {c_WHITE}successfully updated with account {c_CYAN}{id}")
@@ -142,7 +142,7 @@ if __name__ == "__main__":
                 }
                 service = put(
                     f"https://10.20.7.10:18443/rest/v1/config/device/{cvec.name}/ont?action=update&ont-id={id}&serial-number=CXNK{sn}",
-                    auth=("admin", "Thesearethetimes!"),
+                    auth=(username, password),
                     verify=False,
                     json=payload,
                 )
