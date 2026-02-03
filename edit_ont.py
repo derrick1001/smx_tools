@@ -150,6 +150,7 @@ if __name__ == "__main__":
                     levels = get_light(id)
                     print(levels)
                 elif service.status_code == 500:
+                    print(service.status_code)
                     rcode_500(id, sn, mod[sn])
                     sleep(2)
                     levels = get_light(id)
