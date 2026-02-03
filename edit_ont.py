@@ -85,6 +85,14 @@ def rcode_500(id: str, sn: str, mod: str):
                 "serial-number": f"CXNK{sn}",
                 "ont-profile-id": mod,
                 "subscriber-id": id,
+                "twdm-channel": {
+                    "rmon-session": [
+                      {
+                        "bin-duration": "one-minute",
+                        "bin-count": 100
+                      }
+                    ]
+                  }
             }
             print(f"{c_CYAN}Making new ONT...")
             sleep(2)
