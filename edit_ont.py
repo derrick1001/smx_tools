@@ -132,7 +132,7 @@ if __name__ == "__main__":
                     "twdm-channel": {
                         "rmon-session": [
                           {
-                            "bin-duration": "one-minute",
+                            "bin-duration": 1,
                             "bin-count": 100
                           }
                         ]
