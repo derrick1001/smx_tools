@@ -106,10 +106,14 @@ def rcode_500(id: str, sn: str, mod: str):
             }
             mk_eth_serv(**payload)
             print(f"{c_GREEN}ONT updated successfully!")
-        else:
+        elif get_id.status_code == 404:
             print(f"{c_MAGENTA}{sn} {c_WHITE}not found on {c_CYAN}{hostname}, searching...")
             sleep(1)
             continue
+        else:
+            print(f"{c_RED}, {c_WHITE}could not find {c_MAGENTA}{sn}")
+            sleep(1)
+            print(get_id.json())
 
 
 if __name__ == "__main__":
