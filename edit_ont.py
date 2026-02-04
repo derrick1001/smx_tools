@@ -2,6 +2,7 @@ from warnings import filterwarnings
 from sys import path
 from time import sleep
 
+from auth.py import username, password
 from calix.e9 import CalixE9
 from calix.ont_detail import ont
 from calix.axos_e9 import e9
@@ -30,7 +31,8 @@ def get_count():
         print(wt + "...", end="\r")
         sleep(1)
         print(wt.strip("."), end="   \r")
-        count = cvec.connection.send_command_timing("show interface pon 2/1/xp2 discovered-onts | notab | inc discovered-ont[^s] | count")
+        count = cvec.connection.send_command_timing(
+            "show interface pon 2/1/xp2 discovered-onts | notab | inc discovered-ont[^s] | count")
         if '5' in count:
             return 5
 
@@ -39,8 +41,10 @@ def get_discovered():
     # NOTE:
     # If discovering both ports is necessary, do it here and join the lists together with sh_ont.extend()
     #
-    sh_ont = cvec.connection.send_command_timing("show interface pon 2/1/xp2 discovered-onts | notab | inc discovered").split()[3::3]
-    models = cvec.connection.send_command_timing("show interface pon 2/1/xp2 discovered-onts | notab | inc model").split()[1::2]
+    sh_ont = cvec.connection.send_command_timing(
+        "show interface pon 2/1/xp2 discovered-onts | notab | inc discovered").split()[3::3]
+    models = cvec.connection.send_command_timing(
+        "show interface pon 2/1/xp2 discovered-onts | notab | inc model").split()[1::2]
     cxnk = [f"0{i}" if len(i) == 7 else f"00{i}" for i in sh_ont]
     return {sn: mod for sn, mod in zip(cxnk, models)}
 
@@ -67,7 +71,8 @@ def get_light(id: str) -> str:
 
 
 def rcode_500(id: str, sn: str, mod: str):
-    print(f"\n{c_RED}Serial number {c_MAGENTA}CXNK{sn} {c_RED}already in use, deleting and reassigning...")
+    print(f"\n{c_RED}Serial number {c_MAGENTA}CXNK{sn} {
+          c_RED}already in use, deleting and reassigning...")
     sleep(2)
     for hostname in e9.keys():
         get_id = get(f"https://10.20.7.10:18443/rest/v1/config/device/{hostname}/ont?serial-number=CXNK{sn}",
@@ -113,7 +118,8 @@ def rcode_500(id: str, sn: str, mod: str):
                            auth=(username, password),
                            verify=False)
             if validate.status_code == 200:
-                print(f"\nONT {c_MAGENTA}{sn} {c_WHITE}successfully updated with account {c_CYAN}{id}")
+                print(f"\nONT {c_MAGENTA}{sn} {
+                      c_WHITE}successfully updated with account {c_CYAN}{id}")
                 return 0
         elif hostname == 'CVEC-E9-1':
             print(f"{c_RED}Failure, {c_WHITE}could not find {c_MAGENTA}{sn}")
@@ -121,7 +127,8 @@ def rcode_500(id: str, sn: str, mod: str):
             print(get_id.json())
             return 1
         elif get_id.status_code == 404:
-            print(f"{c_MAGENTA}{sn} {c_WHITE}not found on {c_CYAN}{hostname}, searching...")
+            print(f"{c_MAGENTA}{sn} {c_WHITE}not found on {
+                  c_CYAN}{hostname}, searching...")
             sleep(1)
             continue
 
@@ -141,13 +148,15 @@ if __name__ == "__main__":
                     "subscriber-id": id,
                 }
                 service = put(
-                    f"https://10.20.7.10:18443/rest/v1/config/device/{cvec.name}/ont?action=update&ont-id={id}&serial-number=CXNK{sn}",
+                    f"https://10.20.7.10:18443/rest/v1/config/device/{
+                        cvec.name}/ont?action=update&ont-id={id}&serial-number=CXNK{sn}",
                     auth=(username, password),
                     verify=False,
                     json=payload,
                 )
                 if service.status_code == 200:
-                    print(f"\nONT {c_MAGENTA}{sn} {c_WHITE}successfully updated with account {c_CYAN}{id}")
+                    print(f"\nONT {c_MAGENTA}{sn} {
+                          c_WHITE}successfully updated with account {c_CYAN}{id}")
                     sleep(2)
                     levels = get_light(id)
                     print(levels)
