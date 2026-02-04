@@ -68,6 +68,27 @@ def get_light(id: str) -> str:
 
 
 def rcode_500(id: str, sn: str, mod: str):
+    new_ont_payload = {
+        "ont-id": id,
+        "ont-type": "Residential",
+        "isGlobalOnt": False,
+        "serial-number": f"CXNK{sn}",
+        "ont-profile-id": mod,
+        "subscriber-id": id,
+    }
+    services_payload = {
+        "changeGlobalVlan": True,
+        "serviceType": "DATA_SERVICE",
+        "device-name": cvec.name,
+        "ont-port-id": "x1",
+        "admin-state": "enabled",
+        "admin-status": "active",
+        "ont-id": id,
+        "subscriber-id": id,
+        "policy-map": "Elite",
+        "service-name": "Data",
+        "vlan": id,
+    }
     print(f"\n{c_RED}Serial number {c_MAGENTA}CXNK{sn} {c_RED}already in use, deleting and reassigning...")
     sleep(2)
     for hostname in e9.keys():
@@ -76,6 +97,15 @@ def rcode_500(id: str, sn: str, mod: str):
                      verify=False)
         if get_id.status_code == 200:
             print(f"{c_MAGENTA}{sn}{c_WHITE} found on {c_GREEN}{hostname}")
+            if hostname == 'CVEC-E9-1':
+                print(f"{c_CYAN}Deleting old ONT...")
+                rmont(id, cvec.name)
+                sleep(2)
+                print(f"{c_CYAN}Making new ONT...")
+                mk_ont(cvec.name, **new_ont_payload)
+                sleep(2)
+                print(f"{c_CYAN}Applying services...")
+                mk_eth_serv(**services_payload)
             nid = get_id.json()[0].get("ont-id")
             sleep(2)
             print(f"{c_CYAN}Deleting old ONT...")
@@ -83,32 +113,11 @@ def rcode_500(id: str, sn: str, mod: str):
             sleep(1)
             rmont(id, cvec.name)
             sleep(1)
-            payload = {
-                "ont-id": id,
-                "ont-type": "Residential",
-                "isGlobalOnt": False,
-                "serial-number": f"CXNK{sn}",
-                "ont-profile-id": mod,
-                "subscriber-id": id,
-            }
             print(f"{c_CYAN}Making new ONT...")
-            mk_ont(cvec.name, **payload)
+            mk_ont(cvec.name, **new_ont_payload)
             sleep(2)
             print(f"{c_CYAN}Applying services...")
-            payload = {
-                "changeGlobalVlan": True,
-                "serviceType": "DATA_SERVICE",
-                "device-name": cvec.name,
-                "ont-port-id": "x1",
-                "admin-state": "enabled",
-                "admin-status": "active",
-                "ont-id": id,
-                "subscriber-id": id,
-                "policy-map": "Elite",
-                "service-name": "Data",
-                "vlan": id,
-            }
-            mk_eth_serv(**payload)
+            mk_eth_serv(**services_payload)
             sleep(2)
             validate = get(f"https://10.20.7.10:18443/rest/v1/config/device/{cvec.name}/ont?serial-number=CXNK{sn}",
                            auth=(auth.username, auth.password),
@@ -116,11 +125,6 @@ def rcode_500(id: str, sn: str, mod: str):
             if validate.status_code == 200:
                 print(f"\nONT {c_MAGENTA}{sn} {c_WHITE}successfully updated with account {c_CYAN}{id}")
                 return 0
-        elif hostname == 'CVEC-E9-1':
-            print(f"{c_RED}Failure, {c_WHITE}could not find {c_MAGENTA}{sn}")
-            sleep(1)
-            print(get_id.json())
-            return 1
         elif get_id.status_code == 404:
             print(f"{c_MAGENTA}{sn} {c_WHITE}not found on {c_CYAN}{hostname}, searching...")
             sleep(1)
