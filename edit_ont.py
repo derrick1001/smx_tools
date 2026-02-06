@@ -67,7 +67,7 @@ def get_light(id: str) -> str:
     return f"{c_CYAN}DL_{id}:\t{c_GREEN}{dl}\n\t{c_GREEN}{dber}\n{c_CYAN}UL_{id}:\t{c_GREEN}{ul}\n\t{c_GREEN}{uber}\n"
 
 
-def rcode_500(id: str, sn: str, mod: str):
+def make_payload(id: str, sn: str, mod: str) -> tuple[dict, dict]:
     new_ont_payload = {
         "ont-id": id,
         "ont-type": "Residential",
@@ -89,6 +89,11 @@ def rcode_500(id: str, sn: str, mod: str):
         "service-name": "Data",
         "vlan": id,
     }
+    return new_ont_payload, services_payload
+
+
+def rcode_500(id: str, sn: str, mod: str):
+    new_ont_payload, services_payload = make_payload(id, sn, mod)
     print(f"\n{c_RED}Serial number {c_MAGENTA}CXNK{sn} {c_RED}already in use, deleting and reassigning...")
     sleep(2)
     for hostname in e9.keys():
@@ -132,6 +137,15 @@ def rcode_500(id: str, sn: str, mod: str):
             continue
 
 
+def kansas_city_shuffle(id, sn, mod, **kwargs) -> int:
+    service = put(f"https://10.20.7.10:18443/rest/v1/config/device/{cvec.name}/ont?action=update&ont-id={id}&serial-number=CXNK{sn}",
+                  auth=(auth.username, auth.password),
+                  verify=False,
+                  json=kwargs,
+                  )
+    return service.status_code
+
+
 if __name__ == "__main__":
     while True:
         count = get_count()
@@ -146,12 +160,7 @@ if __name__ == "__main__":
                     "ont-profile-id": mod[sn],
                     "subscriber-id": id,
                 }
-                service = put(
-                    f"https://10.20.7.10:18443/rest/v1/config/device/{cvec.name}/ont?action=update&ont-id={id}&serial-number=CXNK{sn}",
-                    auth=(auth.username, auth.password),
-                    verify=False,
-                    json=payload,
-                )
+                service = kansas_city_shuffle(id, sn, mod[sn], **payload)
                 if service.status_code == 200:
                     print(f"\nONT {c_MAGENTA}{sn} {c_WHITE}successfully updated with account {c_CYAN}{id}")
                     sleep(2)
@@ -162,10 +171,21 @@ if __name__ == "__main__":
                     sleep(2)
                     levels = get_light(id)
                     print(levels)
+                elif service.status_code == 404:
+                    print(f"{c_CYAN}{id} {c_WHITE} does not exist, creating...")
+                    new_ont_payload, services_payload = make_payload(id, sn, mod[sn])
+                    sleep(2)
+                    mk_ont(cvec.name, **new_ont_payload)
+                    sleep(2)
+                    print(f"{c_CYAN}Applying services...")
+                    mk_eth_serv(**services_payload)
+                    sleep(2)
+                    levels = get_light(id)
+                    print(levels)
                 else:
                     print(service.status_code)
                     print(service.json())
-                    continue
+                    break
             sleep(180)
         else:
             continue
