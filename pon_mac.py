@@ -6,7 +6,7 @@ from os import system
 
 from calix.ssp import ssp
 from calix.e9 import CalixE9
-from fibers import ROSE
+from fiber_colors import PINK
 
 shelf, slot, port = ssp()
 
@@ -24,9 +24,9 @@ if __name__ == "__main__":
             lines = f.read()
             print(lines)
         system("rm light.txt")
-        print(f"{ROSE}Refreshing" + ".", end="\r")
+        print(f"{PINK}Refreshing" + ".", end="\r")
         sleep(1)
-        print(f"{ROSE}Refreshing" + "..", end="\r")
+        print(f"{PINK}Refreshing" + "..", end="\r")
         sleep(1)
-        print(f"{ROSE}Refreshing" + "...", end="\r")
+        print(f"{PINK}Refreshing" + "...", end="\r")
         sleep(1)
