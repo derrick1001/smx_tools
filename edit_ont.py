@@ -40,7 +40,7 @@ def get_discovered():
     # NOTE:
     # If discovering both ports is necessary, do it here and join the lists together with sh_ont.extend()
     #
-    sh_ont = cvec.connection.send_command_timing("show interface pon 2/1/xp2 discovered-onts | notab | inc discovered").split()[3::3]
+    sh_ont = cvec.connection.send_command_timing("show interface pon 2/1/xp2 discovered-onts | notab | inc discovered-ont | exclude 9A3F1A").split()[3::3]
     cxnk = [f"0{i}" if len(i) == 7 else f"00{i}" for i in sh_ont]
     return cxnk
 
