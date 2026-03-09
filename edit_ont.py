@@ -110,7 +110,7 @@ def rcode_500(id: str, sn: str):
                 sleep(2)
                 print(f"{c_CYAN}Applying services...")
                 mk_eth_serv(**services_payload)
-                continue
+                break
             nid = get_id.json()[0].get("ont-id")
             sleep(2)
             print(f"{c_CYAN}Deleting old ONT...")
