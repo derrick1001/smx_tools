@@ -18,7 +18,7 @@ filterwarnings("ignore", message="Unverified HTTPS request")
 LOW_UP_THRESHOLD = range(-30, -22)
 LOW_DOWN_THRESHOLD = range(-25, -20)
 cvec = CalixE9("10.20.0.51", "CVEC-E9-1")
-ont_range = range(201, 217)
+ONT_RANGE = range(201, 217)
 
 
 def get_count():
@@ -136,11 +136,10 @@ def rcode_500(id: str, sn: str):
             continue
 
 
-def kansas_city_shuffle(id, sn, **kwargs) -> int:
-    service = put(f"https://10.20.7.10:18443/rest/v1/config/device/{cvec.name}/ont?action=update&ont-id={id}&serial-number=CXNK{sn}",
+def kansas_city_shuffle(id, sn) -> int:
+    service = put(f"https://10.20.7.10:18443/rest/v1/config/device/{cvec.name}/ont?action=replace&ont-id={id}&serial-number=CXNK{sn}",
                   auth=(auth.username, auth.password),
                   verify=False,
-                  json=kwargs,
                   )
     return service.status_code
 
@@ -152,14 +151,14 @@ if __name__ == "__main__":
             print(f"{c_GREEN}ONTs discovered!!\n")
             sleep(2)
             serial_numbers = get_discovered()
-            for id, sn in zip(ont_range, serial_numbers):
+            for id, sn in zip(ONT_RANGE, serial_numbers):
                 payload = {
                     "serial-number": sn,
                     "ont-id": id,
                     "ont-profile-id": "GP1100X",
                     "subscriber-id": id,
                 }
-                service = kansas_city_shuffle(id, sn, **payload)
+                service = kansas_city_shuffle(id, sn)
                 if service.status_code == 200:
                     print(f"\nONT {c_MAGENTA}{sn} {c_WHITE}successfully updated with account {c_CYAN}{id}")
                     sleep(2)
