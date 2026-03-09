@@ -50,7 +50,7 @@ def get_light(id: str) -> str:
     try:
         dl = int(float(response.get('opt-signal-level')))
         ul = int(float(response.get('ne-opt-signal-level')))
-    except TypeError, AttributeError:
+    except (TypeError, AttributeError):
         dl = None
         ul = None
     dber = response.get('ds-sdber-rate')
