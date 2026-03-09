@@ -41,9 +41,8 @@ def get_discovered():
     # If discovering both ports is necessary, do it here and join the lists together with sh_ont.extend()
     #
     sh_ont = cvec.connection.send_command_timing("show interface pon 2/1/xp2 discovered-onts | notab | inc discovered").split()[3::3]
-    models = cvec.connection.send_command_timing("show interface pon 2/1/xp2 discovered-onts | notab | inc model").split()[1::2]
     cxnk = [f"0{i}" if len(i) == 7 else f"00{i}" for i in sh_ont]
-    return {sn: mod for sn, mod in zip(cxnk, models)}
+    return cxnk
 
 
 def get_light(id: str) -> str:
@@ -51,7 +50,7 @@ def get_light(id: str) -> str:
     try:
         dl = int(float(response.get('opt-signal-level')))
         ul = int(float(response.get('ne-opt-signal-level')))
-    except TypeError:
+    except TypeError, AttributeError:
         dl = None
         ul = None
     dber = response.get('ds-sdber-rate')
@@ -67,13 +66,13 @@ def get_light(id: str) -> str:
     return f"{c_CYAN}DL_{id}:\t{c_GREEN}{dl}\n\t{c_GREEN}{dber}\n{c_CYAN}UL_{id}:\t{c_GREEN}{ul}\n\t{c_GREEN}{uber}\n"
 
 
-def make_payload(id: str, sn: str, mod: str) -> tuple[dict, dict]:
+def make_payload(id: str, sn: str) -> tuple[dict, dict]:
     new_ont_payload = {
         "ont-id": id,
         "ont-type": "Residential",
         "isGlobalOnt": False,
         "serial-number": f"CXNK{sn}",
-        "ont-profile-id": mod,
+        "ont-profile-id": "GP1100X",
         "subscriber-id": id,
     }
     services_payload = {
@@ -92,8 +91,8 @@ def make_payload(id: str, sn: str, mod: str) -> tuple[dict, dict]:
     return new_ont_payload, services_payload
 
 
-def rcode_500(id: str, sn: str, mod: str):
-    new_ont_payload, services_payload = make_payload(id, sn, mod)
+def rcode_500(id: str, sn: str):
+    new_ont_payload, services_payload = make_payload(id, sn)
     print(f"\n{c_RED}Serial number {c_MAGENTA}CXNK{sn} {c_RED}already in use, deleting and reassigning...")
     sleep(2)
     for hostname in e9.keys():
@@ -137,7 +136,7 @@ def rcode_500(id: str, sn: str, mod: str):
             continue
 
 
-def kansas_city_shuffle(id, sn, mod, **kwargs) -> int:
+def kansas_city_shuffle(id, sn, **kwargs) -> int:
     service = put(f"https://10.20.7.10:18443/rest/v1/config/device/{cvec.name}/ont?action=update&ont-id={id}&serial-number=CXNK{sn}",
                   auth=(auth.username, auth.password),
                   verify=False,
@@ -152,28 +151,28 @@ if __name__ == "__main__":
         if count == 5:
             print(f"{c_GREEN}ONTs discovered!!\n")
             sleep(2)
-            mod = get_discovered()
-            for id, sn in zip(ont_range, mod):
+            serial_numbers = get_discovered()
+            for id, sn in zip(ont_range, serial_numbers):
                 payload = {
                     "serial-number": sn,
                     "ont-id": id,
-                    "ont-profile-id": mod[sn],
+                    "ont-profile-id": "GP1100X",
                     "subscriber-id": id,
                 }
-                service = kansas_city_shuffle(id, sn, mod[sn], **payload)
+                service = kansas_city_shuffle(id, sn, **payload)
                 if service.status_code == 200:
                     print(f"\nONT {c_MAGENTA}{sn} {c_WHITE}successfully updated with account {c_CYAN}{id}")
                     sleep(2)
                     levels = get_light(id)
                     print(levels)
                 elif service.status_code == 500:
-                    rcode_500(id, sn, mod[sn])
+                    rcode_500(id, sn)
                     sleep(2)
                     levels = get_light(id)
                     print(levels)
                 elif service.status_code == 404:
                     print(f"{c_CYAN}{id} {c_WHITE} does not exist, creating...")
-                    new_ont_payload, services_payload = make_payload(id, sn, mod[sn])
+                    new_ont_payload, services_payload = make_payload(id, sn,)
                     sleep(2)
                     mk_ont(cvec.name, **new_ont_payload)
                     sleep(2)
