@@ -180,6 +180,9 @@ if __name__ == "__main__":
                     sleep(2)
                     levels = get_light(id)
                     print(levels)
+                elif service.status_code == 412:
+                    print(f"{c_MAGENTA}{sn} {c_WHITE} is already assigned to {c_CYAN}{id}{c_WHITE}, skipping...")
+                    continue
                 else:
                     print(service.status_code)
                     print(service.json())
