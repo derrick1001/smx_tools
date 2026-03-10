@@ -31,7 +31,7 @@ def get_count():
         print(wt + "...", end="\r")
         sleep(1)
         print(wt.strip("."), end="   \r")
-        count = cvec.connection.send_command_timing("show interface pon 2/1/xp2 discovered-onts | notab | inc discovered-ont[^s} | exclude 9A3F1A | count")
+        count = cvec.connection.send_command_timing("show interface pon 2/1/xp2 discovered-onts | notab | inc discovered-ont[^s] | exclude 9A3F1A | count")
         if '5' in count:
             return 5
 
