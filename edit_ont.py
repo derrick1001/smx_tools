@@ -50,11 +50,13 @@ def get_light(id: str) -> str:
     try:
         dl = int(float(response.get('opt-signal-level')))
         ul = int(float(response.get('ne-opt-signal-level')))
+        dber = response.get('ds-sdber-rate')
+        uber = response.get('us-sdber-rate')
     except (TypeError, AttributeError):
         dl = None
         ul = None
-    dber = response.get('ds-sdber-rate')
-    uber = response.get('us-sdber-rate')
+        dber = None
+        uber = None
     if dl in LOW_DOWN_THRESHOLD:
         dl = f"{c_RED}{dl}"
     if ul in LOW_UP_THRESHOLD:
