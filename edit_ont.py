@@ -141,7 +141,7 @@ def kansas_city_shuffle(id, sn) -> int:
                   auth=(auth.username, auth.password),
                   verify=False,
                   )
-    return service.status_code
+    return service
 
 
 if __name__ == "__main__":
