@@ -30,7 +30,7 @@ def get_count():
         sleep(1)
         print(wt + "...", end="\r")
         sleep(1)
-        print(wt.strip("."), end="   \r")
+        print(wt.strip("."), end="   \n")
         count = cvec.connection.send_command_timing("show interface pon 2/1/xp2 discovered-onts | notab | inc discovered-ont[^s] | exclude 9A3F1A | count")
         serial_numbers = cvec.connection.send_command_timing("show interface pon 2/1/xp2 discovered-onts | notab | inc discovered-ont[^s] | exclude 9A3F1A").split()[2::3]
         for serial_number in serial_numbers:
