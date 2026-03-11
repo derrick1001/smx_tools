@@ -169,7 +169,7 @@ if __name__ == "__main__":
                     sleep(2)
                     levels = get_light(id)
                     print(levels)
-                elif service.status_code == 500:
+                elif service.status_code == 500 or 403:
                     rcode_500(id, sn)
                     sleep(2)
                     levels = get_light(id)
