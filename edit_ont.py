@@ -1,6 +1,7 @@
 from warnings import filterwarnings
 from sys import path
 from time import sleep
+import logging
 
 import auth
 from calix.e9 import CalixE9
@@ -11,6 +12,14 @@ from calix.post_eth_serv import mk_eth_serv
 from calix.post_ont import mk_ont
 from calix.crayon import c_CYAN, c_GREEN, c_MAGENTA, c_RED, c_WHITE
 from requests import get, put
+
+# NOTE: Configure logging paramerters
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+formatter = logging.Formatter("%(levelname)s %(name)s %(asctime)s: %(message)s (Line: %(lineno)d in %(filename)s)")
+file_handler = logging.FileHandler("ont_test.log")
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
 
 path.append("/home/test/smx_tools/")
 filterwarnings("ignore", message="Unverified HTTPS request")
