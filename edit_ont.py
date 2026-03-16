@@ -1,7 +1,6 @@
 from warnings import filterwarnings
 from sys import path
 from time import sleep
-from random import choice
 import logging
 
 import auth
@@ -105,6 +104,7 @@ def make_payload(id: str, sn: str) -> tuple[dict, dict]:
 
 
 def rcode_500(id: str, sn: str):
+    from random import choice
     CHARACTERS = "ABCDEF"
     LENGTH = 8
 
