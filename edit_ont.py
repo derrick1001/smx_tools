@@ -7,12 +7,10 @@ import logging
 import auth
 from calix.e9 import CalixE9
 from calix.ont_detail import ont
-from calix.axos_e9 import e9
-from calix.rmont import rmont
 from calix.post_eth_serv import mk_eth_serv
 from calix.post_ont import mk_ont
 from calix.crayon import c_CYAN, c_GREEN, c_MAGENTA, c_RED, c_WHITE
-from requests import get, put
+from requests import put
 
 # NOTE: Configure logging paramerters
 logger = logging.getLogger(__name__)
@@ -110,11 +108,21 @@ def rcode_500(id: str, sn: str):
     CHARACTERS = "ABCDEF"
     LENGTH = 8
 
-    print(f"\n{c_RED}Serial number {c_MAGENTA}CXNK{sn} {c_RED}already assigned, swapping...")
-    get_id = ont(cvec.name, id)
-    old_id = get_id.json().get("ont-id")
-    random_cxnk = "".join(choice(CHARACTERS) for _ in range(LENGTH + 1))
-    kansas_city_shuffle(old_id, random_cxnk)
+    for ids in ONT_RANGE:
+        if ids == id:
+            continue
+        get_sn = ont(cvec.name, ids)
+        if sn == get_sn.get("serial-number"):
+            random_cxnk = "".join(choice(CHARACTERS) for _ in range(LENGTH + 1))
+            kansas_city_shuffle(ids, random_cxnk)
+            break
+    validate = kansas_city_shuffle(id, sn)
+    if validate.status_code == 200:
+        return
+    else:
+        print(f"Validation failed for {c_MAGENTA}{sn}, {c_WHITE}trying again...")
+        sleep(2)
+        rcode_500(id, sn)
 
 
 def kansas_city_shuffle(id, sn) -> int:
@@ -146,7 +154,10 @@ if __name__ == "__main__":
                     levels = get_light(id)
                     print(levels)
                 elif service.status_code == 500 or service.status_code == 403:
+                    print(f"\n{c_RED}Serial number {c_MAGENTA}CXNK{sn} {c_RED}already assigned, swapping...")
                     rcode_500(id, sn)
+                    sleep(2)
+                    print(f"{c_MAGENTA}{sn} {c_WHITE}has been updated with id {c_CYAN}{id}")
                     levels = get_light(id)
                     print(levels)
                 elif service.status_code == 404:
