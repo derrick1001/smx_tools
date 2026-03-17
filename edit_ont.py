@@ -25,7 +25,7 @@ filterwarnings("ignore", message="Unverified HTTPS request")
 LOW_UP_THRESHOLD = range(-30, -22)
 LOW_DOWN_THRESHOLD = range(-25, -20)
 cvec = CalixE9("10.20.0.51", "CVEC-E9-1")
-ONT_RANGE = range(201, 217)
+ONT_RANGE = range(201, 206)
 
 
 def get_count():
@@ -121,8 +121,7 @@ def rcode_500(id: str, sn: str):
         return
     else:
         print(f"Validation failed for {c_MAGENTA}{sn}, {c_WHITE}trying again...")
-        sleep(2)
-        rcode_500(id, sn)
+        print(validate.json())
 
 
 def kansas_city_shuffle(id, sn) -> int:
