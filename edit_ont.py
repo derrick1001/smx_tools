@@ -124,7 +124,7 @@ def rcode_500(id: str, sn: str):
         print(validate.json())
 
 
-def kansas_city_shuffle(id, sn) -> int:
+def kansas_city_shuffle(id: str, sn: str):
     service = put(f"https://10.20.7.10:18443/rest/v1/config/device/{cvec.name}/ont?action=replace&ont-id={id}&serial-number=CXNK{sn}",
                   auth=(auth.username, auth.password),
                   verify=False,
@@ -161,6 +161,7 @@ if __name__ == "__main__":
                     print(levels)
                 elif service.status_code == 404:
                     print(f"{c_CYAN}{id} {c_WHITE} does not exist, creating...")
+                    print(service.json())
                     new_ont_payload, services_payload = make_payload(id, sn,)
                     sleep(2)
                     mk_ont(cvec.name, **new_ont_payload)
