@@ -36,13 +36,10 @@ def turn_on_ports(cnct, start: int, stop: int):
     shelves = range(start, stop + 1)
     slot = range(1, 3)
     with cnct:
-        cnct.send_command_timing("configure")
+        cnct.send_command("configure")
         for shelf in shelves:
             for sl in slot:
-                card = cnct.send_command_timing(
-                    f"do show card {shelf}/{sl} |\
-                notab | include provision"
-                )
+                card = cnct.send_command(f"do show card {shelf}/{sl} | notab | include provision")
                 if "NG1601" in card.split()[1]:
                     print(f"{shelf}/{sl} card is 1601")
                     port = range(1, 17)
@@ -53,7 +50,7 @@ def turn_on_ports(cnct, start: int, stop: int):
                     print("Card not in service, use show card to verify")
                 for p in port:
                     cmd_list = [f"interface pon {shelf}/{sl}/xp{p}\nno shutdown\ntop"]
-                    cnct.send_command_timing(cmd_list[0])
+                    cnct.send_command(cmd_list[0])
                     print(f"{shelf}/{sl}/xp{p} is on")
 
 
