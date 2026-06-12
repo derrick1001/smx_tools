@@ -1,49 +1,32 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
+
 
 from sys import argv
-
-from calix.connection import calix_e9
-from calix.proc_alrms import proc_alarms
-
-from crayon import c_BLUE, c_WHITE
-
-# NOTE:
-#   Call this script with the IP address and hostname
-#   of the chassis
+from calix.e9 import CalixE9
+from calix.axos_e9 import device
 
 
-@proc_alarms
-def alarm_table(e9=argv[2]):
-    cnct = calix_e9()
-    tbl = input(f"{c_BLUE}Alarm name:{c_WHITE}")
-    if tbl == "dying":
-        dying = cnct.send_command_timing("show alarm active | include ont-dying-gasp")
-        cnct.disconnect()
-        return dying
-    elif tbl == "missing":
-        missing = cnct.send_command_timing("show alarm active | include missing")
-        cnct.disconnect()
-        return missing
-    elif tbl == "red":
-        red_temp = cnct.send_command_timing("show alarm active | include red-temp")
-        cnct.disconnect()
-        return red_temp
-    elif tbl == "all":
-        alrms = cnct.send_command_timing(
-            'show alarm active | include "dying|missing|red-temp"'
-        )
-        cnct.disconnect()
-        return alrms
-    elif tbl == "lop":
-        lop = cnct.send_command_timing("show alarm active | include loss-of-pon")
-        cnct.disconnect()
-        return lop
-    else:
-        print('Valid completions: "all", "dying", "missing", "lop", "red"')
-        alarm_table(e9=argv[2])
+def alarm_table(name: str) -> str:
+    match name:
+        case "dying":
+            dying = e9.alrm_dying()
+            return dying
+        case "missing":
+            missing = e9.alrm_missing()
+            return missing
+        case "red":
+            red_temp = e9.alrm_red_temp()
+            return red_temp
+        case "lop":
+            lop = e9.alrm_loss_of_pon()
+            return lop
 
 
 if __name__ == "__main__":
-    subs = alarm_table(e9=argv[2])
-    for sub in subs:
+    e9 = CalixE9(device(argv[1]))
+    data = alarm_table(argv[2])
+    subs = e9.get_subs(data)
+    for count, sub in enumerate(subs):
         print(sub)
+    if 'count' in locals():
+        print(f"There are {count + 1} sub(s)")
