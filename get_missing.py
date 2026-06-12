@@ -28,5 +28,7 @@ if __name__ == "__main__":
     subs = e9.get_subs(data)
     for count, sub in enumerate(subs):
         print(sub)
-    if 'count' in locals():
+    try:
         print(f"There are {count + 1} sub(s)")
+    except NameError:
+        print("No subs to count")
