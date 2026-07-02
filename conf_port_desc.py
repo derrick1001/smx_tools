@@ -14,7 +14,7 @@ args = parser.parse_args()
 
 
 e9 = CalixE9(burnett)
-params = [(e9.pon_range(3, "1", "11-16", extend=e9.pon_range(3, "2", "1-3")), "n2", e9.fiber_range(97, 114))]
+params = [(e9.pon_range(2, "", "", extend=e9.pon_range(3, "1", "1-7")), "n2", e9.fiber_range(1, 85))]
 
 
 def dry_run(ports: list, feeder: str, fibers: Generator):
@@ -26,13 +26,12 @@ def dry_run(ports: list, feeder: str, fibers: Generator):
 
 
 def config(ports: list, feeder: str, fibers: Generator):
-    e9.connection.send_command_timing("configure")
     for p in ports:
         try:
             cmds = [
-                f"interface pon {p}\ndescription {feeder},{next(fibers)}-{next(fibers)}"
+                f"configure\ninterface pon {p}\ndescription {feeder},{next(fibers)}-{next(fibers)}\ntop"
             ]
-            e9.connection.send_command(cmds[0])
+            e9.connection.send_command_timing(cmds[0], last_read=.5)
         except StopIteration:
             print("No more fibers")
 
