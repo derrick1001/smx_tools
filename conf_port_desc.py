@@ -22,7 +22,6 @@ def dry_run(ports: list, feeder: str, fibers: Generator):
         for p in ports:
             print(f"{p} -> {feeder},{next(fibers)}-{next(fibers)}")
     except StopIteration:
-        print(f"{p} -> {feeder},{next(fibers)}")
         print("No more fibers")
 
 
