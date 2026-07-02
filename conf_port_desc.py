@@ -30,7 +30,7 @@ def config(ports: list, feeder: str, fibers: Generator):
             cmds = [
                 f"configure\ninterface pon {p}\ndescription {feeder},{next(fibers)}-{next(fibers)}\ntop"
             ]
-            e9.connection.send_command_timing(cmds[0], last_read=.5)
+            e9.connection.send_command_timing(cmds[0], last_read=.2)
         except StopIteration:
             print("No more fibers")
 
