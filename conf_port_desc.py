@@ -5,7 +5,6 @@ from time import time
 from calix.e9 import CalixE9
 from calix.axos_e9 import burnett
 
-# NOTE: Change fiber_range function to return a list and use zip() to iterate over it instead
 
 parser = ArgumentParser(description="A script for setting the port descriptions with the correct fibers on E9-2 cards")
 
