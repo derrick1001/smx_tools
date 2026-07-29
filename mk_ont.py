@@ -18,7 +18,7 @@ payload = {
 }
 
 ont = post(
-    f"https://10.20.7.10:18443/rest/v1/config/device/{e9}/ont",
+    f"https://10.20.17.10:18443/rest/v1/config/device/{e9}/ont",
     auth=("admin", "Thesearethetimes!"),
     verify=False,
     json=payload,

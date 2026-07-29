@@ -34,7 +34,7 @@ def clr_alarm():
 
 def affected(instid, port, e9):
     get_affected = requests.get(
-        f"https://10.20.7.10:18443/rest/v1/fault/export/csv/subscriber/device-name/{e9}/instance-id/{instid}",
+        f"https://10.20.17.10:18443/rest/v1/fault/export/csv/subscriber/device-name/{e9}/instance-id/{instid}",
         auth=("admin", "Thesearethetimes!"),
         verify=False,
     )

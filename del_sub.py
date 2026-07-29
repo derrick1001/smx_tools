@@ -6,7 +6,7 @@ acct = input("Name: ")
 
 
 del_sub = delete(
-    f"https://10.20.7.10:18443/rest/v1/ems/subscriber/org/Calix/account/{acct}",
+    f"https://10.20.17.10:18443/rest/v1/ems/subscriber/org/Calix/account/{acct}",
     auth=("admin", "Thesearethetimes!"),
     verify=False,
 )

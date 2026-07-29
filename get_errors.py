@@ -56,7 +56,7 @@ def main(dict0):
     for i in dict0:
         ont_id = i.get("ont-id")
         get_name = get(
-            f"https://10.20.7.10:18443/rest/v1/ems/subscriber/device/{e9}/port/{ont_id}%2Fx1",
+            f"https://10.20.17.10:18443/rest/v1/ems/subscriber/device/{e9}/port/{ont_id}%2Fx1",
             auth=("admin", "Thesearethetimes!"),
             verify=False,
         )

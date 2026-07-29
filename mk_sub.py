@@ -41,7 +41,7 @@ payload = {
 }
 
 sub = post(
-    "https://10.20.7.10:18443/rest/v1/ems/subscriber",
+    "https://10.20.17.10:18443/rest/v1/ems/subscriber",
     auth=("admin", "Thesearethetimes!"),
     verify=False,
     json=payload,
