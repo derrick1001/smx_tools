@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.13
+#!/usr/bin/env python3
 
 from sys import argv
 from time import sleep

@@ -1,5 +1,7 @@
 from requests import post
 
+from calix.server import SMX
+
 payload = {
     "changeGlobalVlan": True,
     "serviceType": "DATA_SERVICE",
@@ -15,7 +17,7 @@ payload = {
 }
 
 ont = post(
-    f"https://10.20.17.10:18443/rest/v1/ems/service",
+    f"https://{SMX}:18443/rest/v1/ems/service",
     auth=("admin", "Thesearethetimes!"),
     verify=False,
     json=payload,
