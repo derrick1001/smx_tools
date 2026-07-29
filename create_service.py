@@ -31,14 +31,14 @@ payload = {
     "is10GECard": false,
     "isAEONTCard": false,
     "isPONCard": false,
-  }
+}
 
-service = post(
-    "https://10.20.7.10:18443/rest/v1/ems/service"
-    auth=("admin", "Thesearethetimes!"),
-    verify=False,
-    json=payload,
-)
+service = post("https://10.20.17.10:18443/rest/v1/ems/service",
+               auth=("admin", "Thesearethetimes!"),
+               verify=False,
+               json=payload
+               )
+
 if service.status_code == 200:
     print("\nONT created successfully!")
 else:
