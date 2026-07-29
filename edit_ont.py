@@ -126,7 +126,7 @@ def rcode_500(id: str, sn: str):
 
 
 def kansas_city_shuffle(id: str, sn: str):
-    service = put(f"https://{SMX}.10:18443/rest/v1/config/device/{cvec.name}/ont?action=replace&ont-id={id}&serial-number=CXNK{sn}",
+    service = put(f"https://{SMX}:18443/rest/v1/config/device/{cvec.name}/ont?action=replace&ont-id={id}&serial-number=CXNK{sn}",
                   auth=(username, password),
                   verify=False,
                   )
