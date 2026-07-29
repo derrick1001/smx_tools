@@ -3,7 +3,7 @@ from sys import path
 from time import sleep
 import logging
 
-import auth
+from calix.auth import username, password
 from calix.e9 import CalixE9
 from calix.ont_detail import ont
 from calix.post_eth_serv import mk_eth_serv
@@ -126,7 +126,7 @@ def rcode_500(id: str, sn: str):
 
 def kansas_city_shuffle(id: str, sn: str):
     service = put(f"https://10.20.17.10:18443/rest/v1/config/device/{cvec.name}/ont?action=replace&ont-id={id}&serial-number=CXNK{sn}",
-                  auth=(auth.username, auth.password),
+                  auth=(username, password),
                   verify=False,
                   )
     return service
