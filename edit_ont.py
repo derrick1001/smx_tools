@@ -19,7 +19,7 @@ file_handler = logging.FileHandler("ont_test.log")
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
-path.append("/home/test/smx_tools/")
+path.append("/home/python_modules/")
 filterwarnings("ignore", message="Unverified HTTPS request")
 
 LOW_UP_THRESHOLD = range(-30, -22)
