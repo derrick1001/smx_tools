@@ -1,12 +1,14 @@
 from requests import delete
 
+from calix.server import SMX
+
 
 # This will become input from a csv file
 acct = input("Name: ")
 
 
 del_sub = delete(
-    f"https://10.20.17.10:18443/rest/v1/ems/subscriber/org/Calix/account/{acct}",
+    f"https://{SMX}:18443/rest/v1/ems/subscriber/org/Calix/account/{acct}",
     auth=("admin", "Thesearethetimes!"),
     verify=False,
 )

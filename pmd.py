@@ -1,9 +1,11 @@
-#!/usr/local/bin/python3
+#!/usr/bin/env python3
 
 from sys import argv, path
 
 import requests
 from netmiko import ConnectHandler
+
+from calix.server import SMX
 
 
 def clr_alarm():
@@ -34,7 +36,7 @@ def clr_alarm():
 
 def affected(instid, port, e9):
     get_affected = requests.get(
-        f"https://10.20.17.10:18443/rest/v1/fault/export/csv/subscriber/device-name/{e9}/instance-id/{instid}",
+        f"https://{SMX}:18443/rest/v1/fault/export/csv/subscriber/device-name/{e9}/instance-id/{instid}",
         auth=("admin", "Thesearethetimes!"),
         verify=False,
     )

@@ -11,4 +11,3 @@ c_CYAN = f"{colorama.Style.BRIGHT}{colorama.Fore.CYAN}"
 c_RED = f"{colorama.Style.BRIGHT}{colorama.Fore.RED}"
 c_YELLOW = f"{colorama.Style.BRIGHT}{colorama.Fore.YELLOW}"
 c_WHITE = f"{colorama.Style.BRIGHT}{colorama.Fore.WHITE}"
-

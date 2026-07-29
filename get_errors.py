@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3
+#!/usr/bin/env python3
 
 import re
 from sys import argv, path
@@ -6,6 +6,8 @@ from warnings import filterwarnings
 
 from netmiko import ConnectHandler
 from requests import get
+
+from calix.server import SMX
 
 filterwarnings("ignore", message="Unverified HTTPS request")
 
@@ -56,7 +58,7 @@ def main(dict0):
     for i in dict0:
         ont_id = i.get("ont-id")
         get_name = get(
-            f"https://10.20.17.10:18443/rest/v1/ems/subscriber/device/{e9}/port/{ont_id}%2Fx1",
+            f"https://{SMX}:18443/rest/v1/ems/subscriber/device/{e9}/port/{ont_id}%2Fx1",
             auth=("admin", "Thesearethetimes!"),
             verify=False,
         )

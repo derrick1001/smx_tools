@@ -6,6 +6,8 @@ from sys import argv, path
 from netmiko import ConnectHandler
 from requests import get
 
+from calix.server import SMX
+
 # Notes
 # call main with diff alarm tables?
 
@@ -35,7 +37,7 @@ def send_commands():
 
 def ont_detail(e9, port):
     ont = get(
-        f"https://10.20.17.10:18443/rest/v1/performance/device/{e9}/ont/{port}/status",
+        f"https://{SMX}:18443/rest/v1/performance/device/{e9}/ont/{port}/status",
         auth=("admin", "Thesearethetimes!"),
         verify=False,
     )
@@ -58,14 +60,14 @@ def ont_detail(e9, port):
 
 def affected(e9, instid, port, names=set()):
     get_affected = get(
-        f"https://10.20.17.10:18443/rest/v1/fault/export/csv/subscriber/device-name/{e9}/instance-id/{instid}",
+        f"https://{SMX}:18443/rest/v1/fault/export/csv/subscriber/device-name/{e9}/instance-id/{instid}",
         auth=("admin", "Thesearethetimes!"),
         verify=False,
     )
     r = get_affected.text.split("\r\n")
     for i in r[1:-1]:
         get_phone = get(
-            f"https://10.20.17.10:18443/rest/v1/ems/subscriber/device/{e9}/port/{port}%2Fx1",
+            f"https://{SMX}:18443/rest/v1/ems/subscriber/device/{e9}/port/{port}%2Fx1",
             auth=("admin", "Thesearethetimes!"),
             verify=False,
         )

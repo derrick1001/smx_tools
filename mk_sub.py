@@ -1,5 +1,7 @@
 from requests import post
 
+from calix.server import SMX
+
 name = input("Name: ")
 acct = input("Acct: ")
 address = input("Address: ")
@@ -41,7 +43,7 @@ payload = {
 }
 
 sub = post(
-    "https://10.20.17.10:18443/rest/v1/ems/subscriber",
+    "https://{SMX}:18443/rest/v1/ems/subscriber",
     auth=("admin", "Thesearethetimes!"),
     verify=False,
     json=payload,
