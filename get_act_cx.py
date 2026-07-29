@@ -16,7 +16,7 @@ from requests import get
 #        if isinstance(onts, list):
 #            for id in onts:
 #                get_cx = get(
-#                    f"https://10.20.7.10:18443/rest/v1/ems/subscriber/device/{argv[2]}/port/{id}%2Fx1",
+#                    f"https://10.20.17.10:18443/rest/v1/ems/subscriber/device/{argv[2]}/port/{id}%2Fx1",
 #                    auth=("admin", "Thesearethetimes!"),
 #                    verify=False,
 #                )
@@ -37,7 +37,7 @@ from requests import get
 #                    continue
 #                for id in lst:
 #                    get_cx = get(
-#                        f"https://10.20.7.10:18443/rest/v1/ems/subscriber/device/{argv[2]}/port/{id}%2Fx1",
+#                        f"https://10.20.17.10:18443/rest/v1/ems/subscriber/device/{argv[2]}/port/{id}%2Fx1",
 #                        auth=("admin", "Thesearethetimes!"),
 #                        verify=False,
 #                    )
