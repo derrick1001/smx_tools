@@ -108,14 +108,18 @@ def rcode_500(id: str, sn: str):
     from random import choice
     CHARACTERS = "ABCDEF"
     LENGTH = 8
+    logger.info(f"Running function {rcode_500.__name__} with parameters {id}, {sn}")
 
     for ids in ONT_RANGE:
         if ids == id:
             continue
         get_sn = ont(cvec.name, ids)
+        logger.info(f"ONT info: {get_sn}")
         if sn == get_sn.get("serial-number"):
             random_cxnk = "".join(choice(CHARACTERS) for _ in range(LENGTH + 1))
-            kansas_city_shuffle(ids, random_cxnk)
+            logger.info(f"Randomize CXNK number was: {random_cxnk}")
+            service = kansas_city_shuffle(ids, random_cxnk)
+            logger.info(f"New ONT info was: {service}")
             break
     validate = kansas_city_shuffle(id, sn)
     if validate.status_code == 200:
@@ -155,6 +159,7 @@ if __name__ == "__main__":
                     print(levels)
                 elif service.status_code == 500 or service.status_code == 403:
                     print(f"\n{c_RED}Serial number {c_MAGENTA}CXNK{sn} {c_RED}already assigned, swapping...")
+                    logger.info(f"Response was: {service.json}")
                     rcode_500(id, sn)
                     sleep(2)
                     print(f"{c_MAGENTA}{sn} {c_WHITE}has been updated with id {c_CYAN}{id}")
