@@ -26,6 +26,9 @@ if __name__ == "__main__":
     e9 = CalixE9(device(argv[1]))
     data = alarm_table(argv[2])
     subs = e9.get_subs(data)
+    with open('subs.txt', 'a') as f:
+        for sub in subs:
+            f.write(sub)
     for count, sub in enumerate(subs):
         print(sub)
     try:
