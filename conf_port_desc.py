@@ -3,17 +3,19 @@ from argparse import ArgumentParser
 from typing import Generator
 from time import time
 from calix.e9 import CalixE9
-from calix.axos_e9 import burnett
+from calix.axos_e9 import device
 
 
 parser = ArgumentParser(description="A script for setting the port descriptions with the correct fibers on E9-2 cards")
 
 parser.add_argument("-n", "--dryrun", action="store_true", help="Display what will be configured on the device, no configuration is changed")
+parser.add_argument("-f", "--feeder", help="Feeder name for labeling purposes")
+parser.add_argument("-d", "--device", help="E9 system to run the program against")
 args = parser.parse_args()
 
 
-e9 = CalixE9(burnett)
-params = [(e9.pon_range(2, "", "", extend=e9.pon_range(3, "1", "1-7")), "n2", e9.fiber_range(1, 85))]
+e9 = CalixE9(device(args.device))
+params: tuple = [(e9.pon_range(2, "1", "1-9"), f"{args.feeder}", e9.fiber_range(1, 20))]
 
 
 def dry_run(ports: list, feeder: str, fibers: Generator):
