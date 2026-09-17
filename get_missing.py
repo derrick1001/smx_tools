@@ -14,6 +14,9 @@ def alarm_table(name: str) -> str:
         case "missing":
             missing = e9.alrm_missing()
             return missing
+        case "rogue":
+            rogue = e9.alrm_missing()
+            return rogue
         case "red":
             red_temp = e9.alrm_red_temp()
             return red_temp
